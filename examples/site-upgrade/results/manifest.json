@@ -11,7 +11,7 @@
     "P3 SDR pixels outside sRGB": "4.9%",
     "HDR peak": 7.78,
     "checks passed": true,
-    "preview": "site/.image-peak/public-images-furnace/preview.html"
+    "preview": "site/.true-image/public-images-furnace/preview.html"
   },
   "public/images/neon.jpg": {
     "frames": "single frame",
@@ -24,7 +24,7 @@
     "P3 SDR pixels outside sRGB": "7.0%",
     "HDR peak": 4.98,
     "checks passed": true,
-    "preview": "site/.image-peak/public-images-neon/preview.html"
+    "preview": "site/.true-image/public-images-neon/preview.html"
   },
   "public/images/snow.jpg": {
     "frames": "single frame",
@@ -36,6 +36,6 @@
     "P3 SDR pixels outside sRGB": "0.0%",
     "HDR peak": 4.0,
     "checks passed": true,
-    "preview": "site/.image-peak/public-images-snow/preview.html"
+    "preview": "site/.true-image/public-images-snow/preview.html"
   }
 }

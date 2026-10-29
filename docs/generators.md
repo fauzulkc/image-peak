@@ -1,6 +1,6 @@
 # Generators
 
-image-peak needs two images of one scene from a generator:
+true-image needs two images of one scene from a generator:
 
 1. **base**: the prompt, photographed normally. Bright parts may clip.
 2. **dark**: an **edit of the saved base**, about 4 stops darker, so the bright parts show colour and
@@ -14,8 +14,8 @@ There are three ways to connect a generator.
 ## 1. Bundled adapters
 
 ```bash
-python3 scripts/image_peak.py run "<prompt>" --slug NAME --out DIR --generator cursor
-python3 scripts/image_peak.py run "<prompt>" --slug NAME --out DIR --generator agy
+python3 scripts/true_image.py run "<prompt>" --slug NAME --out DIR --generator cursor
+python3 scripts/true_image.py run "<prompt>" --slug NAME --out DIR --generator agy
 ```
 
 | Adapter | Drives | Notes |
@@ -54,7 +54,7 @@ test -s "$output_path"
 ```
 
 ```bash
-python3 scripts/image_peak.py run "<prompt>" --slug NAME --out DIR --generator ./my-adapter.sh
+python3 scripts/true_image.py run "<prompt>" --slug NAME --out DIR --generator ./my-adapter.sh
 ```
 
 The bundled [`cursor.sh`](../scripts/generators/cursor.sh) and [`agy.sh`](../scripts/generators/agy.sh)
@@ -66,7 +66,7 @@ Some generators are tools inside an agent (an MCP image tool, a harness's built-
 The agent runs the steps:
 
 ```bash
-python3 scripts/image_peak.py plan "<prompt>" --slug NAME --out DIR
+python3 scripts/true_image.py plan "<prompt>" --slug NAME --out DIR
 ```
 
 `plan` prints JSON with `base_prompt`, `base_path`, `dark_prompt`, `dark_prompt_stronger` and
@@ -75,7 +75,7 @@ python3 scripts/image_peak.py plan "<prompt>" --slug NAME --out DIR
 1. calls its image tool with `base_prompt` and saves the result to `base_path` (`.jpg`, `.png` or `.webp`);
 2. calls the tool in edit mode on that saved file with `dark_prompt` and saves to `dark_path`
    (skips this if the tool cannot edit);
-3. runs `python3 scripts/image_peak.py build --slug NAME --out DIR`. On exit 3 it redoes step 2 with
+3. runs `python3 scripts/true_image.py build --slug NAME --out DIR`. On exit 3 it redoes step 2 with
    `dark_prompt_stronger`.
 
 Inside Claude Code the skill does this on its own when you ask for images and name the tool to use.

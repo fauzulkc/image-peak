@@ -1,11 +1,11 @@
 # Upgrading an existing site or repo
 
-Three commands, each safe to stop after. Work files go to `REPO/.image-peak/`.
+Three commands, each safe to stop after. Work files go to `REPO/.true-image/`.
 
 ```bash
-python3 scripts/image_peak.py audit   ./my-site
-python3 scripts/image_peak.py upgrade ./my-site --generator cursor
-python3 scripts/image_peak.py rewrite ./my-site
+python3 scripts/true_image.py audit   ./my-site
+python3 scripts/true_image.py upgrade ./my-site --generator cursor
+python3 scripts/true_image.py rewrite ./my-site
 ```
 
 A complete worked example, with the recorded output of each step, is in
@@ -13,7 +13,7 @@ A complete worked example, with the recorded output of each step, is in
 
 ## 1. audit: what gains, where it is used, what would break it
 
-`audit` finds every JPEG, PNG and WebP (skipping `node_modules`, build output and files image-peak made)
+`audit` finds every JPEG, PNG and WebP (skipping `node_modules`, build output and files true-image made)
 and every place the source refers to each one: HTML and JSX `<img>`, CSS `url()`, Markdown images,
 imports, and strings in data files. It then scores each image.
 
@@ -51,10 +51,10 @@ Read `audit.md` before upgrading; skip anything the owner wants left alone with 
 ## 2. upgrade: new files beside each original
 
 ```bash
-python3 scripts/image_peak.py upgrade ./my-site                              # every recommended image
-python3 scripts/image_peak.py upgrade ./my-site --images public/hero.jpg     # chosen images
-python3 scripts/image_peak.py upgrade ./my-site --generator cursor           # with a generator dark edit
-python3 scripts/image_peak.py upgrade ./my-site --plan-only                  # dark edits by an agent's tool
+python3 scripts/true_image.py upgrade ./my-site                              # every recommended image
+python3 scripts/true_image.py upgrade ./my-site --images public/hero.jpg     # chosen images
+python3 scripts/true_image.py upgrade ./my-site --generator cursor           # with a generator dark edit
+python3 scripts/true_image.py upgrade ./my-site --plan-only                  # dark edits by an agent's tool
 ```
 
 - Files keep the original's **exact size**, so `width`, `height` and layouts stay right.

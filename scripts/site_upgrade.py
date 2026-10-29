@@ -18,7 +18,7 @@
           writes WORK/markup.patch plus WORK/rewrite.md (CSS backgrounds, markdown, imports and data-module
           references to handle by hand, and the pipeline risks). --apply writes the files too.
 
-WORK defaults to REPO/.image-peak (add it to .gitignore).
+WORK defaults to REPO/.true-image (add it to .gitignore).
 """
 import argparse, difflib, io, json, os, re, shutil, subprocess, sys
 from pathlib import Path
@@ -30,7 +30,7 @@ IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 SOURCE_EXTENSIONS = {".html", ".htm", ".jsx", ".tsx", ".js", ".ts", ".mjs", ".vue", ".svelte", ".astro", ".md", ".mdx",
                      ".css", ".scss", ".sass", ".less", ".njk", ".liquid", ".hbs", ".ejs", ".php", ".erb", ".json"}
 SKIP_DIRECTORIES = {"node_modules", ".git", "dist", "build", ".next", ".nuxt", ".output", ".svelte-kit", ".astro", "out",
-                    "coverage", ".cache", ".turbo", ".vercel", ".wrangler", ".image-peak", "graphify-out", "vendor", "__pycache__"}
+                    "coverage", ".cache", ".turbo", ".vercel", ".wrangler", ".true-image", "graphify-out", "vendor", "__pycache__"}
 TIER_SUFFIXES = (".uhdr.jpg", ".p3.jpg", ".sdr.jpg", ".generator-base.jpg")
 WIDE_GAMUT_WORDS = ("p3", "adobe rgb", "prophoto", "2020", "wide gamut")
 MINIMUM_LONG_SIDE = 480
@@ -38,7 +38,7 @@ MINIMUM_LONG_SIDE = 480
 
 def walk(repo, extensions):
     for root, directories, files in os.walk(repo):
-        directories[:] = [d for d in directories if d not in SKIP_DIRECTORIES and not d.startswith(".image-peak")]
+        directories[:] = [d for d in directories if d not in SKIP_DIRECTORIES and not d.startswith(".true-image")]
         for name in files:
             if Path(name).suffix.lower() in extensions:
                 yield Path(root) / name
@@ -166,8 +166,8 @@ def find_references(repo, images):
             text = source.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
             continue
-        if text.startswith("# image-peak") or '"pipeline risks"' in text or ('"shipped"' in text and '"fallback"' in text):
-            continue  # image-peak's own reports, wherever they were copied
+        if text.startswith("# true-image") or '"pipeline risks"' in text or ('"shipped"' in text and '"fallback"' in text):
+            continue  # true-image's own reports, wherever they were copied
         for match in pattern.finditer(text):
             name = match.group(0)
             if text[match.end():match.end() + 1].isalnum():
@@ -233,7 +233,7 @@ def pipeline_risks(repo):
                     risks.append({"where": f"{package_file.relative_to(repo)} scripts.{script_name}", "risk": why,
                                   "fix": "skip *.uhdr.jpg and *.p3.jpg"})
     for script in walk(repo, {".py", ".js", ".mjs", ".cjs", ".sh", ".ts"}):
-        if script.stat().st_size > 500_000 or "image-peak" in str(script.relative_to(repo)) or script.name in ("site_upgrade.py", "build_tiers.py"):
+        if script.stat().st_size > 500_000 or "true-image" in str(script.relative_to(repo)) or script.name in ("site_upgrade.py", "build_tiers.py"):
             continue
         text = script.read_text(encoding="utf-8", errors="ignore")
         if not re.search(r"(optimi[sz]e|compress|minif|resize|thumbnail)", text, re.I):
@@ -252,7 +252,7 @@ def pipeline_risks(repo):
 # ---------- subcommands ----------
 def work_directory(arguments):
     repo = Path(arguments.repo).expanduser().resolve()
-    work = Path(arguments.work).expanduser().resolve() if arguments.work else repo / ".image-peak"
+    work = Path(arguments.work).expanduser().resolve() if arguments.work else repo / ".true-image"
     work.mkdir(parents=True, exist_ok=True)
     return repo, work
 
@@ -264,7 +264,7 @@ def audit(arguments):
     risks = pipeline_risks(repo)
     result = {"repo": str(repo), "images": images, "pipeline risks": risks}
     (work / "audit.json").write_text(json.dumps(result, indent=2))
-    lines = [f"# image-peak audit: {repo.name}", "",
+    lines = [f"# true-image audit: {repo.name}", "",
              "| Image | Size | Clipped | Saturated | Used in | Recommendation |", "|---|---|---|---|---|---|"]
     for image in images:
         references = image.get("references", [])
@@ -457,7 +457,7 @@ def rewrite(arguments):
             if arguments.apply:
                 path.write_text(text, encoding="utf-8")
     (work / "markup.patch").write_text("".join(diffs))
-    lines = [f"# image-peak rewrite: {repo.name}", "", f"{'Applied' if arguments.apply else 'Patch only (not applied)'}: "
+    lines = [f"# true-image rewrite: {repo.name}", "", f"{'Applied' if arguments.apply else 'Patch only (not applied)'}: "
              f"{len(diffs)} files with <img> to <picture> changes. Patch: `{work / 'markup.patch'}`.", "",
              "## Handle by hand", ""]
     for image, entry, reference in manual:
@@ -484,7 +484,7 @@ def rewrite(arguments):
 
 
 def main(argv):
-    parser = argparse.ArgumentParser(prog="image_peak.py", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(prog="true_image.py", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     commands = parser.add_subparsers(dest="command", required=True)
     for name in ("audit", "upgrade", "rewrite"):
         command = commands.add_parser(name)

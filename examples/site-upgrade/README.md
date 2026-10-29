@@ -1,6 +1,6 @@
 # Site upgrade example
 
-`site/` is a small site in its **before** state; `results/` is the recorded output of running image-peak
+`site/` is a small site in its **before** state; `results/` is the recorded output of running true-image
 on it. The site has six images, every kind of reference the rewrite handles, and three pipeline risks.
 
 ```text
@@ -24,10 +24,10 @@ From the repo root, on a copy so the example stays in its before state:
 
 ```bash
 cp -r examples/site-upgrade/site /tmp/site
-python3 scripts/image_peak.py audit /tmp/site
-python3 scripts/image_peak.py upgrade /tmp/site
-python3 scripts/image_peak.py rewrite /tmp/site
-cat /tmp/site/.image-peak/markup.patch
+python3 scripts/true_image.py audit /tmp/site
+python3 scripts/true_image.py upgrade /tmp/site
+python3 scripts/true_image.py rewrite /tmp/site
+cat /tmp/site/.true-image/markup.patch
 ```
 
 Without a generator, every image builds single-frame, so the furnace keeps its original as the fallback.
@@ -36,8 +36,8 @@ The recorded results gave the furnace the generator's dark edit of that picture 
 `--generator cursor` to `upgrade`, or copy the edit in before running `upgrade`:
 
 ```bash
-mkdir -p /tmp/site/.image-peak/public-images-furnace/frames
-cp examples/glass-furnace/frames/glass-furnace.dark.jpg /tmp/site/.image-peak/public-images-furnace/frames/furnace.dark.jpg
+mkdir -p /tmp/site/.true-image/public-images-furnace/frames
+cp examples/glass-furnace/frames/glass-furnace.dark.jpg /tmp/site/.true-image/public-images-furnace/frames/furnace.dark.jpg
 ```
 
 ## What happened

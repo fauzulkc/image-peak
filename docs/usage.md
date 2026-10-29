@@ -1,7 +1,7 @@
 # Usage
 
-Run every command as `python3 scripts/image_peak.py <command> …` from the repo, or with the full path to
-`scripts/image_peak.py` from anywhere. Paths in `--out` and `REPO` can be relative.
+Run every command as `python3 scripts/true_image.py <command> …` from the repo, or with the full path to
+`scripts/true_image.py` from anywhere. Paths in `--out` and `REPO` can be relative.
 
 ## New images from a prompt
 
@@ -60,7 +60,7 @@ image's exact size, use the site-upgrade commands below, which never crop.
 | `upgrade REPO [--work DIR] [--images PATH …] [--generator ADAPTER \| --plan-only] [--headroom auto\|N]` | Builds the files beside each original, at its exact size |
 | `rewrite REPO [--work DIR] [--apply]` | Writes `markup.patch` and `rewrite.md`; `--apply` also edits the files |
 
-`--work` defaults to `REPO/.image-peak` (add it to `.gitignore`). `--images` takes paths relative to
+`--work` defaults to `REPO/.true-image` (add it to `.gitignore`). `--images` takes paths relative to
 `REPO`, as `audit.md` lists them. Full walkthrough: [site-upgrade](site-upgrade.md).
 
 ## Exit codes

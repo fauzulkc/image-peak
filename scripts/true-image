@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Shell shortcut for scripts/true_image.py: picks a Python 3 and hands over. The Python entry point sets
+# up its own environment on first use, so this works the same from any agent harness or terminal.
+#   true-image run "<scene prompt>" --slug NAME --out DIR --generator cursor
+#   true-image audit ./my-site
+set -euo pipefail
+source="${BASH_SOURCE[0]}"
+while [ -L "$source" ]; do  # follow the ~/.local/bin/true-image symlink from install.sh
+  target="$(readlink "$source")"; [[ "$target" = /* ]] && source="$target" || source="$(dirname "$source")/$target"
+done
+here="$(cd "$(dirname "$source")" && pwd)"
+python="$(command -v python3 || command -v python || true)"
+[ -n "$python" ] || { echo "true-image needs Python 3 (python3 not found). Install Python 3.10+ or uv." >&2; exit 1; }
+exec "$python" "$here/true_image.py" "$@"
