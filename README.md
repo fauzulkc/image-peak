@@ -69,6 +69,21 @@ Existing frames from any source, including camera brackets, go in `<dir>/<name>/
 Exit codes: 0 every check passed, 1 a check failed (named in the report), 3 regenerate the dark edit.
 Serve the output folder over HTTP to view `preview.html`.
 
+**Route C: upgrade an existing site or repo.**
+
+```bash
+IMAGE_PEAK audit   ./my-site                       # which images gain, where they are used, what would strip them
+IMAGE_PEAK upgrade ./my-site --generator cursor    # tiers beside each original, at its exact size
+IMAGE_PEAK rewrite ./my-site                       # <img> to <picture> as markup.patch; --apply to write it
+```
+
+`audit` skips icons, transparent images, existing gain maps, wide-gamut sources and flat graphics, and
+flags build steps that re-save JPEGs (next/image, image plugins, optimizer scripts, Cloudflare Polish).
+`upgrade` never crops or touches the originals and ships only the tiers that earn their bytes; without
+`--generator` it builds single-frame, and `--plan-only` hands the dark edits to an agent's own image
+tool. `rewrite` handles literal `<img>` tags in HTML and JSX and lists CSS backgrounds, Markdown,
+imports and data strings to change by hand. Work files go to `./my-site/.image-peak/`.
+
 ## Making generated images better for the web
 
 The full steps are in [SKILL.md](SKILL.md#making-generated-images-better-for-the-web). In short:

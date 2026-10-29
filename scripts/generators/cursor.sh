@@ -4,6 +4,7 @@
 # and tell it not to move or convert the file (headless mode cannot approve shell commands).
 set -uo pipefail
 mode="$1" prompt_file="$2" output_path="$3" input_image="${4:-}"
+export PATH="$HOME/.local/bin:$PATH"  # the CLI installs here; non-login shells (harness subprocesses) miss it
 mkdir -p ~/cursor-images && cd ~/cursor-images || { echo "cannot use ~/cursor-images" >&2; exit 1; }
 name="hdr-$(basename "${output_path%.*}")-$(date +%s)"
 if [ "$mode" = edit ]; then

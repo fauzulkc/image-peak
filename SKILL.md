@@ -1,6 +1,6 @@
 ---
 name: image-peak
-description: Turn one text prompt into a full set of delivery images for every screen - an Ultra HDR (gain-map) JPEG with P3 colour for HDR screens, a Display P3 SDR JPEG for wide-gamut screens, and an sRGB SDR JPEG for everyone else - all verified by decoding, plus a ready <picture> snippet and a preview page with a comparison slider. Works with any image generator through any harness - a CLI (Cursor agent, agy, bundled adapters), any executable that follows a four-argument adapter contract, or an agent's own image tool (an MCP image tool, a harness's built-in image generation) via plan/build. Use whenever the user wants HDR images, gain-map or Ultra HDR photos, "full dynamic range", "best colour on every screen", wide-gamut / P3 imagery, images that "adapt to the screen", or a generated hero/card/band image that should not lose highlights (fire, sun, neon, snow, sky), in any project or workflow. Also use to convert existing frames (one image, or a base + darker pair, from any source including a camera) into the three tiers.
+description: Turn one text prompt into a full set of delivery images for every screen - an Ultra HDR (gain-map) JPEG with P3 colour for HDR screens, a Display P3 SDR JPEG for wide-gamut screens, and an sRGB SDR JPEG for everyone else - all verified by decoding, plus a ready <picture> snippet and a preview page with a comparison slider. Works with any image generator through any harness - a CLI (Cursor agent, agy, bundled adapters), any executable that follows a four-argument adapter contract, or an agent's own image tool (an MCP image tool, a harness's built-in image generation) via plan/build. Use whenever the user wants HDR images, gain-map or Ultra HDR photos, "full dynamic range", "best colour on every screen", wide-gamut / P3 imagery, images that "adapt to the screen", or a generated hero/card/band image that should not lose highlights (fire, sun, neon, snow, sky), in any project or workflow. Also use to convert existing frames (one image, or a base + darker pair, from any source including a camera) into the three tiers, and to upgrade the images of an existing site or repo - "upgrade our site's images to HDR", "make the photos on this site wide gamut", "audit our images" - with an audit (which images gain, where they are referenced, which build steps would strip the result), tiers at each image's exact original size, and a reviewable <img> to <picture> patch.
 ---
 
 # image-peak: HDR and P3 images from one prompt, any generator
@@ -77,6 +77,42 @@ When only the agent can call the generator (an MCP image tool, a harness image t
 
 The same route converts frames from anywhere: drop `<name>.base.*` (and optionally `<name>.dark.*`)
 into `<dir>/<name>/frames/` and run `build`. Real camera brackets work and give real HDR.
+
+## Route C: upgrade an existing site or repo
+
+Three steps, each safe to stop after. Work files go to `<repo>/.image-peak/` (add it to `.gitignore`).
+
+```bash
+IMAGE_PEAK audit   <repo>                        # report only; changes nothing
+IMAGE_PEAK upgrade <repo> [--generator cursor]   # tiers next to each original; originals untouched
+IMAGE_PEAK rewrite <repo> [--apply]              # <img> to <picture>: a patch, applied only with --apply
+```
+
+1. **audit** finds every JPEG, PNG and WebP (skipping `node_modules`, build output and existing tiers),
+   finds where the source references each one (HTML/JSX `<img>`, CSS `url()`, Markdown, imports, data
+   strings), and scores it. It recommends **skip** for icons under 480 px, images with transparency,
+   images that already have a gain map, sources already in a wide-gamut profile (keep the original as
+   the P3 file), flat graphics and screenshots (P3 expansion would shift brand colours), and images with
+   almost nothing to gain. It also flags **pipeline risks**: anything that re-saves JPEGs and would strip
+   the gain map and profile (next/image without `unoptimized`, Astro/Nuxt/Gatsby image pipelines,
+   vite-imagetools, imagemin, sharp, optimizer scripts, Cloudflare Polish). Read `audit.md` with the
+   owner before upgrading.
+2. **upgrade** builds tiers at the image's **exact original size** (`--keep-size`; never cropped, so
+   layouts and `width`/`height` stay correct). With `--generator`, the generator **edits the existing
+   image** darker (recovered highlight detail, all three tiers, the detail-kept `.sdr.jpg` becomes the
+   fallback). Without one it builds single-frame and the original stays the fallback. `--plan-only`
+   writes `pending-edits.json` (input image, prompt, stronger prompt, where to save) for an agent's own
+   image tool; run upgrade again once the edits are saved. `--images` picks specific files. Each image
+   ships only the tiers that earn their bytes: HDR when 0.5%+ of pixels go above white, P3 when 0.5%+
+   leave sRGB. A failed or weak generator edit falls back to single-frame, never to a broken file.
+3. **rewrite** turns literal `<img src>` references into `<picture>` (`srcSet` and self-closing tags in
+   JSX, every original attribute kept) and writes `markup.patch` plus `rewrite.md`: CSS backgrounds
+   (with the exact `@media` rules), Markdown, imports and data strings to handle by hand, the pipeline
+   risks, and the `dynamic-range-limit` CSS. It skips images already inside a `<picture>`, so re-runs
+   change nothing. Review the patch, then `--apply`; commit only when the owner asks.
+
+Fix the pipeline risks before deploying, or the tiers ship stripped. After deploying, fetch one
+`.uhdr.jpg` from the live site and check it still holds two images (base + gain map).
 
 ## Results
 
