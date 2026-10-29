@@ -1,0 +1,33 @@
+{
+  "slug": "snow-peak",
+  "prompt": "A high alpine valley at midday: a sunlit snowy mountain face and glacier under a deep blue sky, exposed for the dark pine forest in the foreground shade",
+  "size": "1056x794",
+  "frames": "base + dark edit",
+  "alignment": "773 inliers, median residual 0.67px",
+  "dark edit, measured gap": "-1.93 EV",
+  "highlights clipped in the generator base": "7.7%",
+  "headroom": 4.0,
+  "headroom reason": "large bright areas (snow, sky, cloud)",
+  "HDR peak in file (x SDR white, 99.95th pct)": 3.8,
+  "pixels above SDR white": "6.4%",
+  "HDR pixels outside sRGB (P3)": "7.6%",
+  "P3 SDR pixels outside sRGB": "0.3%",
+  "blown to white: generator base -> SDR tier": "2.02% -> 0.20%",
+  "decode error above white (median)": 0.016,
+  "file sizes": {
+    "uhdr": "363 KB",
+    "p3": "205 KB",
+    "sdr": "206 KB"
+  },
+  "checks": {
+    "alignment: 50+ inliers, median residual under 2 px (or single frame)": true,
+    "Ultra HDR holds 2 images (base + gain map)": true,
+    "decoded HDR peak within 10% of the master": true,
+    "decode error above white under 12% (median)": true,
+    "SDR base in the file matches the intended base (mean under 3)": true,
+    "P3 file carries a Display P3 profile": true,
+    "P3 file leaves sRGB colours alone (mean under 4)": true,
+    "SDR base blows out no more than the generator base": true
+  },
+  "all checks passed": true
+}

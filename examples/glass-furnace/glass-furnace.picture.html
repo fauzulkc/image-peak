@@ -1,0 +1,8 @@
+<picture>
+  <source media="(dynamic-range: high)" srcset="glass-furnace.uhdr.jpg">
+  <source media="(color-gamut: p3)" srcset="glass-furnace.p3.jpg">
+  <img src="glass-furnace.sdr.jpg" width="1048" height="712" alt="Inside a dim stone glassblowing workshop: the open mouth of a glass furnace glows with intense orange-yellow fire, a gather of molten glass glows on a steel pipe, cobalt blue and emerald green vases catch the light on a shelf" loading="lazy" decoding="async">
+</picture>
+<!-- Keep HDR calm in grids and let it run when opened:
+     .grid img { dynamic-range-limit: standard; }  .lightbox img { dynamic-range-limit: no-limit; }
+     Never pass these files through an optimizer that re-saves JPEGs: it drops the gain map and the profile. -->

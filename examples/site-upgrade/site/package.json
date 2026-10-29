@@ -1,0 +1,2 @@
+{ "name": "sample-site", "private": true, "scripts": { "build": "next build", "images": "python3 scripts/optimize.py" },
+  "dependencies": { "next": "15.0.0", "react": "19.0.0" } }

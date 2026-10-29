@@ -166,6 +166,8 @@ def find_references(repo, images):
             text = source.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
             continue
+        if text.startswith("# image-peak") or '"pipeline risks"' in text or ('"shipped"' in text and '"fallback"' in text):
+            continue  # image-peak's own reports, wherever they were copied
         for match in pattern.finditer(text):
             name = match.group(0)
             if text[match.end():match.end() + 1].isalnum():
@@ -231,7 +233,7 @@ def pipeline_risks(repo):
                     risks.append({"where": f"{package_file.relative_to(repo)} scripts.{script_name}", "risk": why,
                                   "fix": "skip *.uhdr.jpg and *.p3.jpg"})
     for script in walk(repo, {".py", ".js", ".mjs", ".cjs", ".sh", ".ts"}):
-        if script.stat().st_size > 500_000 or "image-peak" in str(script):
+        if script.stat().st_size > 500_000 or "image-peak" in str(script.relative_to(repo)) or script.name in ("site_upgrade.py", "build_tiers.py"):
             continue
         text = script.read_text(encoding="utf-8", errors="ignore")
         if not re.search(r"(optimi[sz]e|compress|minif|resize|thumbnail)", text, re.I):
@@ -381,7 +383,9 @@ def upgrade(arguments):
 
 def run_adapter(adapter_name, prompt, output_path, input_image):
     bundled = SCRIPTS / "generators" / f"{adapter_name}.sh"
-    command = ["bash", str(bundled)] if bundled.exists() else (["bash", adapter_name] if adapter_name.endswith(".sh") else [adapter_name])
+    runners = {".sh": ["bash"], ".py": [sys.executable], ".js": ["node"], ".mjs": ["node"], ".ps1": ["pwsh", "-File"]}
+    path = bundled if bundled.exists() else Path(adapter_name).expanduser()
+    command = runners.get(path.suffix.lower(), []) + [str(path)]
     prompt_file = output_path.with_suffix(".prompt.txt")
     prompt_file.write_text(prompt)
     for attempt in (1, 2):

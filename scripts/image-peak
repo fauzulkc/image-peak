@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Shell shortcut for scripts/image_peak.py: picks a Python 3 and hands over. The Python entry point sets
+# up its own environment on first use, so this works the same from any agent harness or terminal.
+#   image-peak run "<scene prompt>" --slug NAME --out DIR --generator cursor
+#   image-peak audit ./my-site
+set -euo pipefail
+source="${BASH_SOURCE[0]}"
+while [ -L "$source" ]; do  # follow the ~/.local/bin/image-peak symlink from install.sh
+  target="$(readlink "$source")"; [[ "$target" = /* ]] && source="$target" || source="$(dirname "$source")/$target"
+done
+here="$(cd "$(dirname "$source")" && pwd)"
+python="$(command -v python3 || command -v python || true)"
+[ -n "$python" ] || { echo "image-peak needs Python 3 (python3 not found). Install Python 3.10+ or uv." >&2; exit 1; }
+exec "$python" "$here/image_peak.py" "$@"

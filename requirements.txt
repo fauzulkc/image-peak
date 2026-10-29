@@ -1,0 +1,6 @@
+# Tested with Python 3.12: numpy 2.5.4, opencv-python-headless 5.0.0.93, pillow 13.0.0, imagecodecs 2026.10.10.
+# imagecodecs bundles libultrahdr (the Ultra HDR gain-map encoder) as a prebuilt wheel: nothing compiles.
+numpy>=2.0,<3
+opencv-python-headless>=4.10,<6
+pillow>=11.0,<14
+imagecodecs>=2026.10.10

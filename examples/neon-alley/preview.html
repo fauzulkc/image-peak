@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HDR Tiers Preview</title>
+<style>
+  :root { --paper: #f4f1ea; --ink: #1d1b18; --muted: #6b655c; --rule: #d9d3c7; --good: #2f7a3f; --bad: #b3261e; }
+  @media (prefers-color-scheme: dark) { :root { --paper: #141311; --ink: #ece8e0; --muted: #9a9387; --rule: #2c2a26; --good: #7fcf8f; --bad: #f2a29b; } }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 system-ui, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 20px; margin: 0 0 4px; } h2 { font-size: 15px; margin: 28px 0 8px; }
+  p { color: var(--muted); margin: 0 0 12px; max-width: 75ch; }
+  img { width: 100%; height: auto; display: block; border-radius: 4px; }
+  .modes { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .modes button { font: inherit; padding: 4px 10px; border: 1px solid var(--rule); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; }
+  .modes button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .compare { position: relative; border-radius: 6px; overflow: hidden; user-select: none; touch-action: pan-y; }
+  .compare img { border-radius: 0; }
+  .compare .after { position: absolute; inset: 0; height: 100%; object-fit: cover; clip-path: inset(0 0 0 var(--split, 50%)); dynamic-range-limit: no-limit; }
+  .compare .handle { position: absolute; top: 0; bottom: 0; left: var(--split, 50%); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / 0.35); pointer-events: none; }
+  .compare .handle::after { content: ""; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.4); }
+  .compare .tag { position: absolute; top: 10px; padding: 2px 8px; border-radius: 3px; background: rgb(0 0 0 / 0.55); color: #fff; font-size: 12px; pointer-events: none; }
+  .compare .tag.left { left: 10px; } .compare .tag.right { right: 10px; }
+  .compare input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+  .compare input:focus-visible ~ .handle { background: #ffd54a; }
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  figure { margin: 0; } figcaption { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .delivered img { dynamic-range-limit: no-limit; }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 14px; font-size: 13px; margin: 0; }
+  dt { color: var(--muted); } dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .pass { color: var(--good); } .fail { color: var(--bad); }
+  pre { font-size: 12px; background: color-mix(in srgb, var(--ink) 6%, transparent); padding: 12px; border-radius: 6px; overflow-x: auto; }
+  @media (max-width: 700px) { .tiers { grid-template-columns: 1fr; } dl { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>A narrow rain-soaked alley at night with abstract neon tubes in magenta, cyan and red, bare bulbs strung overhead and long coloured reflections on wet cobblestones</h1>
+  <p id="screen-note"></p>
+
+  <h2>Generator output vs delivered tiers</h2>
+  <div class="modes" role="group" aria-label="Right side of the slider">
+    <span>Right side:</span>
+    <button type="button" data-mode="sdr">sRGB SDR</button>
+    <button type="button" data-mode="p3">P3 SDR</button>
+    <button type="button" data-mode="uhdr">Ultra HDR</button>
+  </div>
+  <div class="compare">
+    <img class="before" src="neon-alley.generator-base.jpg" alt="Generator output">
+    <img class="after" alt="Delivered tier">
+    <span class="tag left">Generator output</span><span class="tag right"></span>
+    <input type="range" min="0" max="100" value="50" step="0.5" aria-label="Comparison split">
+    <span class="handle" aria-hidden="true"></span>
+  </div>
+
+  <h2>The three tiers</h2>
+  <div class="tiers">
+    <figure><img src="neon-alley.sdr.jpg" alt=""><figcaption>sRGB SDR: everyone else</figcaption></figure>
+    <figure><img src="neon-alley.p3.jpg" alt=""><figcaption>P3 SDR: wide-gamut screens without HDR</figcaption></figure>
+    <figure class="delivered"><picture>
+  <source media="(dynamic-range: high)" srcset="neon-alley.uhdr.jpg">
+  <source media="(color-gamut: p3)" srcset="neon-alley.p3.jpg">
+  <img src="neon-alley.sdr.jpg" width="1042" height="794" alt="A narrow rain-soaked alley at night with abstract neon tubes in magenta, cyan and red, bare bulbs strung overhead and long coloured reflections on wet cobblestones" decoding="async">
+</picture>
+<figcaption>Delivered to this screen: <strong id="picked">…</strong></figcaption></figure>
+  </div>
+
+  <h2>Report</h2>
+  <dl id="report"></dl>
+  <h2>Delivery snippet</h2>
+  <pre id="snippet"></pre>
+</main>
+<script>
+  const report = {"slug": "neon-alley", "prompt": "A narrow rain-soaked alley at night with abstract neon tubes in magenta, cyan and red, bare bulbs strung overhead and long coloured reflections on wet cobblestones", "size": "1042x794", "frames": "base + dark edit", "alignment": "488 inliers, median residual 1.11px", "dark edit, measured gap": "-1.00 EV", "highlights clipped in the generator base": "0.8%", "headroom": 8.0, "headroom reason": "coloured light sources (fire, neon, lamps)", "HDR peak in file (x SDR white, 99.95th pct)": 3.58, "pixels above SDR white": "0.4%", "HDR pixels outside sRGB (P3)": "8.5%", "P3 SDR pixels outside sRGB": "8.4%", "blown to white: generator base -> SDR tier": "0.00% -> 0.00%", "decode error above white (median)": 0.082, "file sizes": {"uhdr": "522 KB", "p3": "249 KB", "sdr": "252 KB"}, "checks": {"alignment: 50+ inliers, median residual under 2 px (or single frame)": true, "Ultra HDR holds 2 images (base + gain map)": true, "decoded HDR peak within 10% of the master": true, "decode error above white under 12% (median)": true, "SDR base in the file matches the intended base (mean under 3)": true, "P3 file carries a Display P3 profile": true, "P3 file leaves sRGB colours alone (mean under 4)": true, "SDR base blows out no more than the generator base": true}, "all checks passed": true}
+  const slug = report.slug
+  const screenIsHdr = matchMedia('(dynamic-range: high)').matches
+  const screenIsP3 = matchMedia('(color-gamut: p3)').matches
+  document.getElementById('screen-note').textContent =
+    `This screen reports ${screenIsHdr ? 'HDR' : 'SDR'} and ${screenIsP3 ? 'a P3' : 'an sRGB'} gamut. ` +
+    (screenIsHdr ? 'The Ultra HDR tier shows real brightness above white here.' : 'The Ultra HDR tier shows its SDR base here; open this page on an HDR screen to see the lift.')
+
+  const tierLabels = { sdr: 'sRGB SDR', p3: 'P3 SDR', uhdr: 'Ultra HDR' }
+  const compare = document.querySelector('.compare')
+  const range = compare.querySelector('input')
+  range.addEventListener('input', () => compare.style.setProperty('--split', `${range.value}%`))
+  const setMode = mode => {
+    compare.querySelector('.after').src = `${slug}.${mode}.jpg`
+    compare.querySelector('.tag.right').textContent = tierLabels[mode]
+    document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)))
+  }
+  document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)))
+  setMode(screenIsHdr ? 'uhdr' : screenIsP3 ? 'p3' : 'sdr')
+
+  const delivered = document.querySelector('.delivered img')
+  const showPicked = () => {
+    const file = decodeURIComponent(delivered.currentSrc.split('/').pop())
+    const tier = Object.keys(tierLabels).find(key => file.endsWith(`.${key}.jpg`))
+    document.getElementById('picked').textContent = `${tierLabels[tier] || '?'} (${file})`
+  }
+  delivered.complete ? showPicked() : delivered.addEventListener('load', showPicked)
+
+  const rows = Object.entries(report).filter(([key]) => !['checks', 'slug', 'all checks passed'].includes(key))
+    .map(([key, value]) => `<dt>${key}</dt><dd>${typeof value === 'object' ? Object.entries(value).map(([k, v]) => `${k} ${v}`).join(', ') : value}</dd>`)
+  const checks = Object.entries(report.checks)
+    .map(([name, passed]) => `<dt class="${passed ? 'pass' : 'fail'}">${passed ? 'pass' : 'FAIL'}</dt><dd>${name}</dd>`)
+  document.getElementById('report').innerHTML = rows.concat(checks).join('')
+  fetch(`${slug}.picture.html`).then(response => response.text()).then(text => { document.getElementById('snippet').textContent = text }).catch(() => {})
+</script>
+</body>
+</html>

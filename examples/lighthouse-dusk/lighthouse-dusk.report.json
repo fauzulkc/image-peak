@@ -1,0 +1,33 @@
+{
+  "slug": "lighthouse-dusk",
+  "prompt": "A stone lighthouse on dark sea cliffs at dusk, its lamp lit and casting a beam, waves breaking white on the rocks below, a thin band of orange sunset under heavy storm clouds",
+  "size": "1042x768",
+  "frames": "base + dark edit",
+  "alignment": "788 inliers, median residual 0.47px",
+  "dark edit, measured gap": "-0.39 EV",
+  "highlights clipped in the generator base": "0.5%",
+  "headroom": 8.0,
+  "headroom reason": "coloured light sources (fire, neon, lamps)",
+  "HDR peak in file (x SDR white, 99.95th pct)": 2.28,
+  "pixels above SDR white": "0.3%",
+  "HDR pixels outside sRGB (P3)": "0.6%",
+  "P3 SDR pixels outside sRGB": "0.5%",
+  "blown to white: generator base -> SDR tier": "0.00% -> 0.00%",
+  "decode error above white (median)": 0.015,
+  "file sizes": {
+    "uhdr": "274 KB",
+    "p3": "188 KB",
+    "sdr": "189 KB"
+  },
+  "checks": {
+    "alignment: 50+ inliers, median residual under 2 px (or single frame)": true,
+    "Ultra HDR holds 2 images (base + gain map)": true,
+    "decoded HDR peak within 10% of the master": true,
+    "decode error above white under 12% (median)": true,
+    "SDR base in the file matches the intended base (mean under 3)": true,
+    "P3 file carries a Display P3 profile": true,
+    "P3 file leaves sRGB colours alone (mean under 4)": true,
+    "SDR base blows out no more than the generator base": true
+  },
+  "all checks passed": true
+}

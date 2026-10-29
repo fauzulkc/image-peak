@@ -1,0 +1,5 @@
+.band {
+  min-height: 60vh;
+  background-image: url("/images/neon.jpg");
+  background-size: cover;
+}

@@ -1,0 +1,12 @@
+{
+  "name": "image-peak",
+  "description": "image-peak: HDR, Display P3 and sRGB web images from any generator",
+  "owner": { "name": "Fauzul Chowdhury", "url": "https://github.com/fauzulkc" },
+  "plugins": [
+    {
+      "name": "image-peak",
+      "source": "./",
+      "description": "One prompt, or an existing site's images, to verified Ultra HDR, Display P3 and sRGB web images with any image generator."
+    }
+  ]
+}

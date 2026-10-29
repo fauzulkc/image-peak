@@ -1,0 +1,8 @@
+<picture>
+  <source media="(dynamic-range: high)" srcset="night-market.uhdr.jpg">
+  <source media="(color-gamut: p3)" srcset="night-market.p3.jpg">
+  <img src="night-market.sdr.jpg" width="1078" height="812" alt="A night market street food stall with glowing paper lanterns, a hot wok throwing orange flames, steam rising, wet pavement reflecting the lights" loading="lazy" decoding="async">
+</picture>
+<!-- Keep HDR calm in grids and let it run when opened:
+     .grid img { dynamic-range-limit: standard; }  .lightbox img { dynamic-range-limit: no-limit; }
+     Never pass these files through an optimizer that re-saves JPEGs: it drops the gain map and the profile. -->

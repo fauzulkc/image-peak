@@ -1,0 +1,8 @@
+<picture>
+  <source media="(dynamic-range: high)" srcset="lighthouse-dusk.uhdr.jpg">
+  <source media="(color-gamut: p3)" srcset="lighthouse-dusk.p3.jpg">
+  <img src="lighthouse-dusk.sdr.jpg" width="1042" height="768" alt="A stone lighthouse on dark sea cliffs at dusk, its lamp lit and casting a beam, waves breaking white on the rocks below, a thin band of orange sunset under heavy storm clouds" loading="lazy" decoding="async">
+</picture>
+<!-- Keep HDR calm in grids and let it run when opened:
+     .grid img { dynamic-range-limit: standard; }  .lightbox img { dynamic-range-limit: no-limit; }
+     Never pass these files through an optimizer that re-saves JPEGs: it drops the gain map and the profile. -->

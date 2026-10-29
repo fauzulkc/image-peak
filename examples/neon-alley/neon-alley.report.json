@@ -1,0 +1,33 @@
+{
+  "slug": "neon-alley",
+  "prompt": "A narrow rain-soaked alley at night with abstract neon tubes in magenta, cyan and red, bare bulbs strung overhead and long coloured reflections on wet cobblestones",
+  "size": "1042x794",
+  "frames": "base + dark edit",
+  "alignment": "488 inliers, median residual 1.11px",
+  "dark edit, measured gap": "-1.00 EV",
+  "highlights clipped in the generator base": "0.8%",
+  "headroom": 8.0,
+  "headroom reason": "coloured light sources (fire, neon, lamps)",
+  "HDR peak in file (x SDR white, 99.95th pct)": 3.58,
+  "pixels above SDR white": "0.4%",
+  "HDR pixels outside sRGB (P3)": "8.5%",
+  "P3 SDR pixels outside sRGB": "8.4%",
+  "blown to white: generator base -> SDR tier": "0.00% -> 0.00%",
+  "decode error above white (median)": 0.082,
+  "file sizes": {
+    "uhdr": "522 KB",
+    "p3": "249 KB",
+    "sdr": "252 KB"
+  },
+  "checks": {
+    "alignment: 50+ inliers, median residual under 2 px (or single frame)": true,
+    "Ultra HDR holds 2 images (base + gain map)": true,
+    "decoded HDR peak within 10% of the master": true,
+    "decode error above white under 12% (median)": true,
+    "SDR base in the file matches the intended base (mean under 3)": true,
+    "P3 file carries a Display P3 profile": true,
+    "P3 file leaves sRGB colours alone (mean under 4)": true,
+    "SDR base blows out no more than the generator base": true
+  },
+  "all checks passed": true
+}

@@ -1,0 +1,29 @@
+--- a/index.html
++++ b/index.html
+@@ -5,7 +5,11 @@
+   <header><img src="/images/logo.png" alt="Logo" width="300" height="100"></header>
+   <main>
+     <h1>Glass</h1>
+-    <img src="/images/furnace.jpg" alt="A glass furnace" width="1152" height="864" class="hero">
++    <picture>
++      <source media="(dynamic-range: high)" srcset="/images/furnace.uhdr.jpg">
++      <source media="(color-gamut: p3)" srcset="/images/furnace.p3.jpg">
++      <img src="/images/furnace.sdr.jpg" alt="A glass furnace" width="1152" height="864" class="hero">
++    </picture>
+     <img src="/images/dashboard.png" alt="Dashboard screenshot" width="1200" height="800">
+     <section class="band"><p>Night markets</p></section>
+   </main>
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -1,7 +1,10 @@
+ export function Hero() {
+   return (
+     <figure className="hero">
+-      <img className="hero-image" src="/images/snow.jpg" alt="Alpine snow" width={1152} height={864} />
++      <picture>
++        <source media="(dynamic-range: high)" srcSet="/images/snow.uhdr.jpg" />
++        <img className="hero-image" src="/images/snow.jpg" alt="Alpine snow" width={1152} height={864} />
++      </picture>
+       <figcaption>Above the tree line</figcaption>
+     </figure>
+   )

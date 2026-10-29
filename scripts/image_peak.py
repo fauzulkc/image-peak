@@ -1,6 +1,10 @@
 """One prompt in, three verified delivery tiers out (Ultra HDR, P3 SDR, sRGB SDR), with any image generator.
 
-Subcommands (run inside WSL with ~/.venvs/image-peak/bin/python):
+Run with any Python 3: `python3 scripts/image_peak.py <command>` (or `bash scripts/image-peak`). The
+first run sets up its own environment and re-runs inside it. Subcommands:
+
+  doctor
+        Sets up the environment if needed and prints what image-peak will use.
 
   plan  "<scene prompt>" --slug NAME --out DIR [--no-people] [--aspect 3:2]
         Writes DIR/NAME/plan.json and prints the two generator-neutral prompts and where each frame goes.
@@ -27,6 +31,13 @@ import argparse, json, subprocess, sys
 from pathlib import Path
 
 SCRIPTS = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPTS))
+import environment
+
+environment.ensure_environment()  # from here on, sys.executable has the image libraries
+if len(sys.argv) > 1 and sys.argv[1] == "doctor":
+    environment.doctor()
+    sys.exit(0)
 
 # Existing sites and repos: audit, upgrade, rewrite (see site_upgrade.py).
 if len(sys.argv) > 1 and sys.argv[1] in ("audit", "upgrade", "rewrite"):
@@ -82,13 +93,19 @@ def make_plan(arguments):
     return folder, plan
 
 
+def adapter_command(path):
+    """How to call an adapter on any OS: bash for .sh, this Python for .py, node for .js, else directly."""
+    runners = {".sh": ["bash"], ".py": [sys.executable], ".js": ["node"], ".mjs": ["node"], ".ps1": ["pwsh", "-File"]}
+    return runners.get(path.suffix.lower(), []) + [str(path)]
+
+
 def resolve_adapter(name):
     bundled = ADAPTERS / f"{name}.sh"
     if bundled.exists():
         return ["bash", str(bundled)]
     path = Path(name).expanduser()
     if path.exists():
-        return ["bash", str(path)] if path.suffix == ".sh" else [str(path)]
+        return adapter_command(path)
     sys.exit(f"FAIL: no adapter '{name}' (bundled: {', '.join(p.stem for p in ADAPTERS.glob('*.sh'))}, or pass a path)")
 
 

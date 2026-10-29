@@ -1,0 +1,8 @@
+<picture>
+  <source media="(dynamic-range: high)" srcset="neon-alley.uhdr.jpg">
+  <source media="(color-gamut: p3)" srcset="neon-alley.p3.jpg">
+  <img src="neon-alley.sdr.jpg" width="1042" height="794" alt="A narrow rain-soaked alley at night with abstract neon tubes in magenta, cyan and red, bare bulbs strung overhead and long coloured reflections on wet cobblestones" loading="lazy" decoding="async">
+</picture>
+<!-- Keep HDR calm in grids and let it run when opened:
+     .grid img { dynamic-range-limit: standard; }  .lightbox img { dynamic-range-limit: no-limit; }
+     Never pass these files through an optimizer that re-saves JPEGs: it drops the gain map and the profile. -->

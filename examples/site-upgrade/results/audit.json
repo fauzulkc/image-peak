@@ -1,0 +1,140 @@
+{
+  "repo": "site",
+  "images": [
+    {
+      "path": "public/images/dashboard.png",
+      "size": "1200x800",
+      "bytes": 4658,
+      "profile": "none (read as sRGB)",
+      "clipped highlights": "43.7%",
+      "saturated colour": "14.2%",
+      "kind": "graphic (flat colour, UI or illustration)",
+      "recommendation": "skip",
+      "reason": "graphic: flat colour gains nothing from HDR, and P3 expansion would shift brand colours",
+      "references": [
+        {
+          "file": "index.html",
+          "line": 9,
+          "kind": "img-tag",
+          "reference": "/images/dashboard.png"
+        }
+      ]
+    },
+    {
+      "path": "public/images/furnace.jpg",
+      "size": "1152x864",
+      "bytes": 292160,
+      "profile": "none (read as sRGB)",
+      "clipped highlights": "3.2%",
+      "saturated colour": "2.1%",
+      "kind": "photographic",
+      "recommendation": "upgrade",
+      "reason": "clipped highlights to recover (a generator dark edit recovers detail; single-frame lifts them)",
+      "references": [
+        {
+          "file": "index.html",
+          "line": 8,
+          "kind": "img-tag",
+          "reference": "/images/furnace.jpg"
+        },
+        {
+          "file": "src/data/gallery.ts",
+          "line": 1,
+          "kind": "string",
+          "reference": "/images/furnace.jpg"
+        }
+      ]
+    },
+    {
+      "path": "public/images/icon.png",
+      "size": "64x64",
+      "bytes": 156,
+      "profile": "none (read as sRGB)",
+      "clipped highlights": "0.0%",
+      "saturated colour": "100.0%",
+      "kind": "graphic (flat colour, UI or illustration)",
+      "recommendation": "skip",
+      "reason": "small (64 px long side): icon or thumbnail"
+    },
+    {
+      "path": "public/images/logo.png",
+      "size": "600x200",
+      "bytes": 1548,
+      "profile": "none (read as sRGB)",
+      "clipped highlights": "0.0%",
+      "saturated colour": "16.9%",
+      "kind": "graphic (flat colour, UI or illustration)",
+      "recommendation": "skip",
+      "reason": "uses transparency: gain-map JPEGs have no alpha",
+      "references": [
+        {
+          "file": "index.html",
+          "line": 5,
+          "kind": "img-tag",
+          "reference": "/images/logo.png"
+        }
+      ]
+    },
+    {
+      "path": "public/images/neon.jpg",
+      "size": "1152x864",
+      "bytes": 427998,
+      "profile": "none (read as sRGB)",
+      "clipped highlights": "0.5%",
+      "saturated colour": "5.7%",
+      "kind": "photographic",
+      "recommendation": "upgrade",
+      "reason": "clipped highlights to recover (a generator dark edit recovers detail; single-frame lifts them)",
+      "references": [
+        {
+          "file": "content/post.md",
+          "line": 3,
+          "kind": "markdown-image",
+          "reference": "/images/neon.jpg"
+        },
+        {
+          "file": "src/styles/site.css",
+          "line": 3,
+          "kind": "css-url",
+          "reference": "/images/neon.jpg"
+        }
+      ]
+    },
+    {
+      "path": "public/images/snow.jpg",
+      "size": "1152x864",
+      "bytes": 344149,
+      "profile": "none (read as sRGB)",
+      "clipped highlights": "2.9%",
+      "saturated colour": "0.0%",
+      "kind": "photographic",
+      "recommendation": "upgrade",
+      "reason": "clipped highlights to recover (a generator dark edit recovers detail; single-frame lifts them)",
+      "references": [
+        {
+          "file": "src/components/Hero.tsx",
+          "line": 4,
+          "kind": "img-tag",
+          "reference": "/images/snow.jpg"
+        }
+      ]
+    }
+  ],
+  "pipeline risks": [
+    {
+      "where": "package.json",
+      "risk": "next: next/image re-encodes images unless images.unoptimized is true",
+      "fix": "exclude *.uhdr.jpg and *.p3.jpg from it (or serve them from a path it skips)"
+    },
+    {
+      "where": "scripts/optimize.py",
+      "risk": "script re-saves images with Pillow",
+      "fix": "skip *.uhdr.jpg and *.p3.jpg in it: re-saving drops the gain map and the P3 profile"
+    },
+    {
+      "where": "wrangler config",
+      "risk": "Cloudflare: Polish or Image Resizing re-encodes JPEGs if enabled for the zone (not visible in the repo)",
+      "fix": "keep Polish off for the image paths, or check the served bytes still hold the gain map"
+    }
+  ]
+}

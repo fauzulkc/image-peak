@@ -29,13 +29,16 @@ Two images of one scene:
 A text-only generator that cannot edit: give it only the base. The build runs in **single-frame mode**
 (highlights lifted from the base alone; the SDR tiers are the generator's picture). Less good, still valid.
 
-## Setup (once per machine)
+## Running it
 
-`bash scripts/setup.sh` creates `~/.venvs/image-peak` (numpy, opencv, pillow, imagecodecs with
-libultrahdr 2.0.2; no compiling) and reports which generator CLIs are logged in.
-Below, `IMAGE_PEAK` means `~/.venvs/image-peak/bin/python -I <skill dir>/scripts/image_peak.py`.
-On Windows, set up and run it inside WSL (`wsl bash -lc "..."`, skill dir as a `/mnt/c/...` path);
-`--out` then takes a WSL path.
+Below, `IMAGE_PEAK` means `python3 <base directory of this skill>/scripts/image_peak.py` (the folder
+that holds this SKILL.md; for a plugin install, the plugin folder). On Windows use `py` or `python`
+if `python3` is missing; it runs natively, and inside WSL too. **There is no install step:** the first
+call creates its own environment in `~/.venvs/image-peak` (once, about a minute; numpy, OpenCV, Pillow,
+imagecodecs with libultrahdr; nothing compiles), then re-runs the command inside it. It needs Python 3.10+
+with `venv`, or `uv`; the error names what to install if neither works. `IMAGE_PEAK doctor` sets up and
+reports which generator CLIs it found. Documentation with copy-paste examples: `docs/`, `AGENTS.md`
+(the same instructions for other agent harnesses) and https://github.com/fauzulkc/image-peak.
 
 ## Route A: a CLI generator (one command)
 

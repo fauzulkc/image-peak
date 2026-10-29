@@ -1,0 +1,117 @@
+[
+  {
+    "slug": "glass-furnace",
+    "prompt": "Inside a dim stone glassblowing workshop: the open mouth of a glass furnace glows with intense orange-yellow fire, a gather of molten glass glows on a steel pipe, cobalt blue and emerald green vases catch the light on a shelf",
+    "size": "1048x712",
+    "alignment": "732 inliers, median residual 0.88px",
+    "dark edit gap": "-1.88 EV",
+    "highlights clipped in generator output": "5.3%",
+    "headroom": 8.0,
+    "headroom reason": "coloured light sources (fire, neon, lamps)",
+    "HDR peak": 7.85,
+    "pixels above SDR white": "3.9%",
+    "HDR pixels in P3": "6.9%",
+    "P3 SDR pixels outside sRGB": "6.5%",
+    "blown to white": "2.20% -> 0.00%",
+    "sizes": {
+      "uhdr": "265 KB",
+      "p3": "163 KB",
+      "sdr": "164 KB"
+    },
+    "checks passed": "8/8",
+    "map: above white (measured)": "3.9%",
+    "map: outside sRGB (measured)": "5.4%"
+  },
+  {
+    "slug": "night-market",
+    "prompt": "A night market street food stall with glowing paper lanterns, a hot wok throwing orange flames, steam rising, wet pavement reflecting the lights",
+    "size": "1078x812",
+    "alignment": "1671 inliers, median residual 0.72px",
+    "dark edit gap": "-0.86 EV",
+    "highlights clipped in generator output": "3.6%",
+    "headroom": 8.0,
+    "headroom reason": "coloured light sources (fire, neon, lamps)",
+    "HDR peak": 7.28,
+    "pixels above SDR white": "2.6%",
+    "HDR pixels in P3": "6.9%",
+    "P3 SDR pixels outside sRGB": "6.4%",
+    "blown to white": "0.02% -> 0.02%",
+    "sizes": {
+      "uhdr": "409 KB",
+      "p3": "227 KB",
+      "sdr": "229 KB"
+    },
+    "checks passed": "8/8",
+    "map: above white (measured)": "2.6%",
+    "map: outside sRGB (measured)": "4.2%"
+  },
+  {
+    "slug": "neon-alley",
+    "prompt": "A narrow rain-soaked alley at night with abstract neon tubes in magenta, cyan and red, bare bulbs strung overhead and long coloured reflections on wet cobblestones",
+    "size": "1042x794",
+    "alignment": "488 inliers, median residual 1.11px",
+    "dark edit gap": "-1.00 EV",
+    "highlights clipped in generator output": "0.8%",
+    "headroom": 8.0,
+    "headroom reason": "coloured light sources (fire, neon, lamps)",
+    "HDR peak": 3.58,
+    "pixels above SDR white": "0.4%",
+    "HDR pixels in P3": "8.5%",
+    "P3 SDR pixels outside sRGB": "8.4%",
+    "blown to white": "0.00% -> 0.00%",
+    "sizes": {
+      "uhdr": "522 KB",
+      "p3": "249 KB",
+      "sdr": "252 KB"
+    },
+    "checks passed": "8/8",
+    "map: above white (measured)": "0.4%",
+    "map: outside sRGB (measured)": "3.8%"
+  },
+  {
+    "slug": "snow-peak",
+    "prompt": "A high alpine valley at midday: a sunlit snowy mountain face and glacier under a deep blue sky, exposed for the dark pine forest in the foreground shade",
+    "size": "1056x794",
+    "alignment": "773 inliers, median residual 0.67px",
+    "dark edit gap": "-1.93 EV",
+    "highlights clipped in generator output": "7.7%",
+    "headroom": 4.0,
+    "headroom reason": "large bright areas (snow, sky, cloud)",
+    "HDR peak": 3.8,
+    "pixels above SDR white": "6.4%",
+    "HDR pixels in P3": "7.6%",
+    "P3 SDR pixels outside sRGB": "0.3%",
+    "blown to white": "2.02% -> 0.20%",
+    "sizes": {
+      "uhdr": "363 KB",
+      "p3": "205 KB",
+      "sdr": "206 KB"
+    },
+    "checks passed": "8/8",
+    "map: above white (measured)": "6.4%",
+    "map: outside sRGB (measured)": "1.6%"
+  },
+  {
+    "slug": "lighthouse-dusk",
+    "prompt": "A stone lighthouse on dark sea cliffs at dusk, its lamp lit and casting a beam, waves breaking white on the rocks below, a thin band of orange sunset under heavy storm clouds",
+    "size": "1042x768",
+    "alignment": "788 inliers, median residual 0.47px",
+    "dark edit gap": "-0.39 EV",
+    "highlights clipped in generator output": "0.5%",
+    "headroom": 8.0,
+    "headroom reason": "coloured light sources (fire, neon, lamps)",
+    "HDR peak": 2.28,
+    "pixels above SDR white": "0.3%",
+    "HDR pixels in P3": "0.6%",
+    "P3 SDR pixels outside sRGB": "0.5%",
+    "blown to white": "0.00% -> 0.00%",
+    "sizes": {
+      "uhdr": "274 KB",
+      "p3": "188 KB",
+      "sdr": "189 KB"
+    },
+    "checks passed": "8/8",
+    "map: above white (measured)": "0.3%",
+    "map: outside sRGB (measured)": "0.5%"
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "public/images/furnace.jpg": {
+    "frames": "base + generator dark edit",
+    "shipped": {
+      "uhdr": "furnace.uhdr.jpg",
+      "p3": "furnace.p3.jpg",
+      "sdr": "furnace.sdr.jpg"
+    },
+    "fallback": "furnace.sdr.jpg",
+    "pixels above SDR white": "2.9%",
+    "P3 SDR pixels outside sRGB": "4.9%",
+    "HDR peak": 7.78,
+    "checks passed": true,
+    "preview": "site/.image-peak/public-images-furnace/preview.html"
+  },
+  "public/images/neon.jpg": {
+    "frames": "single frame",
+    "shipped": {
+      "uhdr": "neon.uhdr.jpg",
+      "p3": "neon.p3.jpg"
+    },
+    "fallback": "neon.jpg",
+    "pixels above SDR white": "0.6%",
+    "P3 SDR pixels outside sRGB": "7.0%",
+    "HDR peak": 4.98,
+    "checks passed": true,
+    "preview": "site/.image-peak/public-images-neon/preview.html"
+  },
+  "public/images/snow.jpg": {
+    "frames": "single frame",
+    "shipped": {
+      "uhdr": "snow.uhdr.jpg"
+    },
+    "fallback": "snow.jpg",
+    "pixels above SDR white": "6.9%",
+    "P3 SDR pixels outside sRGB": "0.0%",
+    "HDR peak": 4.0,
+    "checks passed": true,
+    "preview": "site/.image-peak/public-images-snow/preview.html"
+  }
+}
