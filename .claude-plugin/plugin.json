@@ -1,6 +1,6 @@
 {
   "name": "image-peak",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "One prompt, or an existing site's images, to verified Ultra HDR, Display P3 and sRGB web images with any image generator, plus a ready <picture> snippet.",
   "author": { "name": "Fauzul Chowdhury", "url": "https://github.com/fauzulkc" },
   "homepage": "https://github.com/fauzulkc/image-peak",

@@ -18,7 +18,7 @@ import numpy as np
 from PIL import Image, ImageCms
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from display_p3_icc import display_p3_profile
+from display_p3_icc import display_p3_profile, srgb_profile
 
 parser = argparse.ArgumentParser()
 parser.add_argument("base")
@@ -210,8 +210,7 @@ ultrahdr = imagecodecs.ultrahdr_encode(
 )
 paths = {"uhdr": output / f"{slug}.uhdr.jpg", "p3": output / f"{slug}.p3.jpg", "sdr": output / f"{slug}.sdr.jpg"}
 paths["uhdr"].write_bytes(ultrahdr)
-srgb_profile = ImageCms.ImageCmsProfile(ImageCms.createProfile("sRGB")).tobytes()
-Image.fromarray(sdr_pixels).save(paths["sdr"], quality=90, icc_profile=srgb_profile)
+Image.fromarray(sdr_pixels).save(paths["sdr"], quality=90, icc_profile=srgb_profile())
 p3_sdr_linear = np.clip(expand_into_p3(srgb_decode(sdr_pixels / 255.0) @ SRGB_TO_P3.T, arguments.chroma_boost), 0, 1)
 Image.fromarray((srgb_encode(p3_sdr_linear) * 255).round().astype(np.uint8)).save(paths["p3"], quality=90, icc_profile=display_p3_profile())
 

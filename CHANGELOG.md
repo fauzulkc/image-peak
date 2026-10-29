@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 (2026-10-30)
+
+- Reproducible builds: the sRGB file embeds a fixed sRGB profile built in code (identical conversion to
+  Little CMS's own), instead of Pillow's, which stamped the current time. Rebuilding an example no longer
+  changes a committed file.
+
 ## 1.0.0 (2026-10-29)
 
 - Installable as a Claude Code plugin (`/plugin install image-peak --marketplace fauzulkc/image-peak`),
