@@ -19,11 +19,21 @@ Subcommands (run inside WSL with ~/.venvs/image-peak/bin/python):
 
   run   "<scene prompt>" --slug NAME --out DIR --generator ADAPTER [...]
         plan + generate + build, regenerating the dark edit once if it recovered too little.
+
+  audit | upgrade | rewrite  REPO [...]
+        Upgrade an existing site or repo's images in place (see site_upgrade.py).
 """
 import argparse, json, subprocess, sys
 from pathlib import Path
 
 SCRIPTS = Path(__file__).resolve().parent
+
+# Existing sites and repos: audit, upgrade, rewrite (see site_upgrade.py).
+if len(sys.argv) > 1 and sys.argv[1] in ("audit", "upgrade", "rewrite"):
+    sys.path.insert(0, str(SCRIPTS))
+    import site_upgrade
+    site_upgrade.main(sys.argv[1:])
+    sys.exit(0)
 ADAPTERS = SCRIPTS / "generators"
 IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp")
 

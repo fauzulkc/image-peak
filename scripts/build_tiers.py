@@ -29,6 +29,7 @@ parser.add_argument("--headroom", default="auto", help="'auto' or the brightest 
 parser.add_argument("--chroma-boost", type=float, default=1.15, help="OKLab chroma scale for saturated colour going into P3")
 parser.add_argument("--prompt", default="", help="the scene prompt, recorded in the report")
 parser.add_argument("--single-frame", action="store_true", help="no dark edit: highlights are lifted from the base alone")
+parser.add_argument("--keep-size", action="store_true", help="keep the base's exact dimensions (upgrading an existing image)")
 arguments = parser.parse_args()
 output = Path(arguments.output)
 output.mkdir(parents=True, exist_ok=True)
@@ -114,16 +115,21 @@ else:
     coverage = cv2.erode(cv2.warpPerspective(np.ones(dark.shape[:2], np.uint8) * 255, homography, (width, height)), np.ones((9, 9), np.uint8)) > 0
     residual = np.linalg.norm(cv2.perspectiveTransform(source[None], homography)[0] - target, axis=1)[inliers.ravel() == 1]
 
-# Crop to the rectangle the dark edit covers (trim the worst edge until clean), even dimensions.
-top, bottom, left, right = 0, height, 0, width
-while not coverage[top:bottom, left:right].all():
-    window = coverage[top:bottom, left:right]
-    gaps = {"top": (~window[0]).sum(), "bottom": (~window[-1]).sum(), "left": (~window[:, 0]).sum(), "right": (~window[:, -1]).sum()}
-    worst = max(gaps, key=gaps.get)
-    top, bottom, left, right = top + (worst == "top"), bottom - (worst == "bottom"), left + (worst == "left"), right - (worst == "right")
-bottom, right = bottom - (bottom - top) % 2, right - (right - left) % 2
-base, dark = base[top:bottom, left:right], dark[top:bottom, left:right]
-height, width = base.shape[:2]
+if arguments.keep_size:
+    # Upgrading an existing image: its dimensions are part of the page's layout, so never crop.
+    # Where the edit does not reach, the base stands in (no recovered highlight detail there).
+    dark = np.where(coverage[..., None], dark, base)
+else:
+    # Crop to the rectangle the dark edit covers (trim the worst edge until clean), even dimensions.
+    top, bottom, left, right = 0, height, 0, width
+    while not coverage[top:bottom, left:right].all():
+        window = coverage[top:bottom, left:right]
+        gaps = {"top": (~window[0]).sum(), "bottom": (~window[-1]).sum(), "left": (~window[:, 0]).sum(), "right": (~window[:, -1]).sum()}
+        worst = max(gaps, key=gaps.get)
+        top, bottom, left, right = top + (worst == "top"), bottom - (worst == "bottom"), left + (worst == "left"), right - (worst == "right")
+    bottom, right = bottom - (bottom - top) % 2, right - (right - left) % 2
+    base, dark = base[top:bottom, left:right], dark[top:bottom, left:right]
+    height, width = base.shape[:2]
 
 base_encoded, dark_encoded = base / 255.0, dark / 255.0
 base_linear, dark_linear = srgb_decode(base_encoded), srgb_decode(dark_encoded)

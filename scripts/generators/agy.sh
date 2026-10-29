@@ -5,6 +5,7 @@
 # A 429 RESOURCE_EXHAUSTED means the image quota is gone for hours: exit 2, use another generator.
 set -uo pipefail
 mode="$1" prompt_file="$2" output_path="$3" input_image="${4:-}"
+export PATH="$HOME/.local/bin:$PATH"  # the CLI installs here; non-login shells (harness subprocesses) miss it
 name="hdr-$(basename "${output_path%.*}")-$(date +%s)"
 if [ "$mode" = edit ]; then
   lead="Use the existing image at $input_image as the input image and edit it with your built-in generate_image tool."
