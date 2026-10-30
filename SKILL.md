@@ -1,6 +1,6 @@
 ---
 name: true-image
-description: Turn one text prompt into a full set of delivery images for every screen - an Ultra HDR (gain-map) JPEG with P3 colour for HDR screens, a Display P3 SDR JPEG for wide-gamut screens, and an sRGB SDR JPEG for everyone else - all verified by decoding, plus a ready <picture> snippet and a preview page with a comparison slider. Works with any image generator through any harness - a CLI (Cursor agent, agy, bundled adapters), any executable that follows a four-argument adapter contract, or an agent's own image tool (an MCP image tool, a harness's built-in image generation) via plan/build. Use whenever the user wants HDR images, gain-map or Ultra HDR photos, "full dynamic range", "best colour on every screen", wide-gamut / P3 imagery, images that "adapt to the screen", or a generated hero/card/band image that should not lose highlights (fire, sun, neon, snow, sky), in any project or workflow. Also use to convert existing frames (one image, or a base + darker pair, from any source including a camera) into the three tiers, and to upgrade the images of an existing site or repo - "upgrade our site's images to HDR", "make the photos on this site wide gamut", "audit our images" - with an audit (which images gain, where they are referenced, which build steps would strip the result), tiers at each image's exact original size, and a reviewable <img> to <picture> patch.
+description: Turn one text prompt into a full set of delivery images for every screen - an Ultra HDR (gain-map) JPEG with P3 colour for HDR screens, a Display P3 SDR JPEG for wide-gamut screens, and an sRGB SDR JPEG for everyone else - all verified by decoding, plus a ready <picture> snippet and a preview page with a comparison slider. Works with any image generator through any harness - a CLI (Cursor agent, agy, bundled adapters), any executable that follows a four-argument adapter contract, or an agent's own image tool (an MCP image tool, a harness's built-in image generation) via plan/build. Use whenever the user wants HDR images, gain-map or Ultra HDR photos, "full dynamic range", "best colour on every screen", wide-gamut / P3 imagery, images that "adapt to the screen", or a generated hero/card/band image that should keep its highlights (fire, sun, neon, snow, sky), or to post-process an image just made with agy, Cursor, an MCP image tool or any generator, in any project or workflow. Also use to convert existing frames (one image, or a base + darker pair, from any source including a camera) into the three tiers, and to upgrade the images of an existing site or repo - "upgrade our site's images to HDR", "make the photos on this site wide gamut", "audit our images" - with an audit (which images gain, where they are referenced, which build steps would strip the result), tiers at each image's exact original size, and a reviewable <img> to <picture> patch.
 ---
 
 # true-image: HDR and P3 images from one prompt, any generator
@@ -12,11 +12,11 @@ generator supplies the picture; this skill's code supplies the dynamic range and
 | Tier | File | Shown to |
 |---|---|---|
 | HDR + P3 | `<slug>.uhdr.jpg`: detail-kept sRGB base + multichannel gain map | HDR screens (Chromium, Safari 26); the OS scales the lift to the live headroom |
-| P3 SDR | `<slug>.p3.jpg`: Display P3 profile | Wide-gamut screens not showing HDR |
+| P3 SDR | `<slug>.p3.jpg`: Display P3 profile | Wide-gamut screens showing SDR |
 | sRGB SDR | `<slug>.sdr.jpg` | Everyone else |
 
-The SDR tiers keep highlight detail (fire stays orange flames, snow keeps texture) instead of the
-generator's blown white; the HDR tier lifts those highlights above white.
+The SDR tiers keep highlight detail (fire stays orange flames, snow keeps texture) where the
+generator blew them to white; the HDR tier lifts those highlights above white.
 
 ## What the generator must do (any generator)
 
@@ -24,18 +24,18 @@ Two images of one scene:
 
 1. **base**: the prompt, photographed normally (bright parts may clip).
 2. **dark**: an **edit of the saved base** (same framing), about 4 stops darker so the bright parts
-   show colour and texture. It must be an edit; two separate generations are two different scenes.
+   show colour and texture. Editing the saved base keeps one scene in both frames.
 
-A text-only generator that cannot edit: give it only the base. The build runs in **single-frame mode**
-(highlights lifted from the base alone; the SDR tiers are the generator's picture). Less good, still valid.
+A text-only generator gives only the base. The build runs in **single-frame mode** (highlights lifted
+from the base alone; the SDR tiers are the generator's picture).
 
 ## Running it
 
 Below, `TRUE_IMAGE` means `python3 <base directory of this skill>/scripts/true_image.py` (the folder
 that holds this SKILL.md; for a plugin install, the plugin folder). On Windows use `py` or `python`
-if `python3` is missing; it runs natively, and inside WSL too. **There is no install step:** the first
+if `python3` is missing; it runs natively, and inside WSL too. **Setup is automatic:** the first
 call creates its own environment in `~/.venvs/true-image` (once, about a minute; numpy, OpenCV, Pillow,
-imagecodecs with libultrahdr; nothing compiles), then re-runs the command inside it. It needs Python 3.10+
+imagecodecs with libultrahdr, all prebuilt wheels), then re-runs the command inside it. It needs Python 3.10+
 with `venv`, or `uv`; the error names what to install if neither works. `TRUE_IMAGE doctor` sets up and
 reports which generator CLIs it found. Documentation with copy-paste examples: `docs/`, `AGENTS.md`
 (the same instructions for other agent harnesses) and https://github.com/fauzulkc/true-image.
@@ -52,8 +52,8 @@ regenerates the dark edit once (stronger) if it recovered too little. Re-runs sk
 
 Bundled adapters (`scripts/generators/`): `cursor` (Cursor Agent CLI, Nano Banana) and `agy`
 (Antigravity CLI, generate_image). Their tool rules come from `cursor-image-gen` and
-`antigravity-image-gen`: never `--force`; agy runs with normal permissions, so a run where agy reaches
-for a shell tool ends without an image (exit 1) and a quota 429 exits 2 (switch generator).
+`antigravity-image-gen`: Cursor runs with `--trust`; agy runs with its normal permissions and saves through
+its own `generate_image`. A run that ends with no image exits 1; a quota 429 exits 2 (switch generator).
 
 **Any other generator: write an adapter.** Any executable, called as
 
@@ -63,7 +63,7 @@ for a shell tool ends without an image (exit 1) and a quota 429 exits 2 (switch 
 ```
 
 It reads the prompt from `prompt_file`, writes one image (JPEG, PNG or WebP) to `output_path`, and
-exits 0. Anything else means failure (the runner retries once). The prompts are generator-neutral;
+exits 0. Any other exit, or an empty file, counts as a failure, and the runner retries once. The prompts are generator-neutral;
 the adapter adds its own tool wording (see `cursor.sh`, about 20 lines). Pass it as `--generator /path/to/adapter`.
 
 ## Route B: an agent's own image tool (MCP, built-in harness tools)
@@ -74,21 +74,35 @@ When only the agent can call the generator (an MCP image tool, a harness image t
    `base_prompt`, `base_path`, `dark_prompt`, `dark_prompt_stronger`, `dark_path`.
 2. Call the image tool with `base_prompt`; save the image to `base_path` (any of .jpg/.png/.webp).
 3. Call the tool **in edit mode on that saved base** with `dark_prompt`; save to `dark_path`.
-   No edit mode: skip this step (single-frame mode).
+   A text-only tool skips this step (single-frame mode).
 4. `TRUE_IMAGE build --slug <name> --out <dir>`. Exit 3 = the dark edit recovered too little: redo step 3
    with `dark_prompt_stronger`, then build again.
 
 The same route converts frames from anywhere: drop `<name>.base.*` (and optionally `<name>.dark.*`)
 into `<dir>/<name>/frames/` and run `build`. Real camera brackets work and give real HDR.
 
+## Route B2: post-process an image that already exists
+
+After any generation (agy, Cursor, an MCP image tool, a download), true-image is the next step:
+
+1. `TRUE_IMAGE plan "<what the image shows>" --slug <name> --out <dir>` (prompts and the `frames/` folder).
+2. Copy the image to `<dir>/<name>/frames/<name>.base.<ext>`.
+3. For recovered detail, make the dark edit of that saved file: `TRUE_IMAGE generate --slug <name> --out
+   <dir> --generator agy` (or `cursor`) runs the edit alone, since the base exists; an MCP or harness tool
+   edits `base_path` with `dark_prompt` and saves to `dark_path`. Skip it for single-frame.
+4. `TRUE_IMAGE build --slug <name> --out <dir>`.
+
+For an image already placed in a page, `audit` then `upgrade --images <path>` keeps its exact size.
+Full guide with every generator: `docs/post-process.md`.
+
 ## Route C: upgrade an existing site or repo
 
 Three steps, each safe to stop after. Work files go to `<repo>/.true-image/` (add it to `.gitignore`).
 
 ```bash
-TRUE_IMAGE audit   <repo>                        # report only; changes nothing
-TRUE_IMAGE upgrade <repo> [--generator cursor]   # tiers next to each original; originals untouched
-TRUE_IMAGE rewrite <repo> [--apply]              # <img> to <picture>: a patch, applied only with --apply
+TRUE_IMAGE audit   <repo>                        # report only
+TRUE_IMAGE upgrade <repo> [--generator cursor]   # tiers next to each original; originals stay as they are
+TRUE_IMAGE rewrite <repo> [--apply]              # <img> to <picture>: a patch; --apply applies it
 ```
 
 1. **audit** finds every JPEG, PNG and WebP (skipping `node_modules`, build output and existing tiers),
@@ -100,21 +114,21 @@ TRUE_IMAGE rewrite <repo> [--apply]              # <img> to <picture>: a patch, 
    the gain map and profile (next/image without `unoptimized`, Astro/Nuxt/Gatsby image pipelines,
    vite-imagetools, imagemin, sharp, optimizer scripts, Cloudflare Polish). Read `audit.md` with the
    owner before upgrading.
-2. **upgrade** builds tiers at the image's **exact original size** (`--keep-size`; never cropped, so
+2. **upgrade** builds tiers at the image's **exact original size** (`--keep-size`, uncropped, so
    layouts and `width`/`height` stay correct). With `--generator`, the generator **edits the existing
    image** darker (recovered highlight detail, all three tiers, the detail-kept `.sdr.jpg` becomes the
    fallback). Without one it builds single-frame and the original stays the fallback. `--plan-only`
    writes `pending-edits.json` (input image, prompt, stronger prompt, where to save) for an agent's own
    image tool; run upgrade again once the edits are saved. `--images` picks specific files. Each image
    ships only the tiers that earn their bytes: HDR when 0.5%+ of pixels go above white, P3 when 0.5%+
-   leave sRGB. A failed or weak generator edit falls back to single-frame, never to a broken file.
+   leave sRGB. A failed or weak generator edit falls back to single-frame, and every written file passes its checks.
 3. **rewrite** turns literal `<img src>` references into `<picture>` (`srcSet` and self-closing tags in
    JSX, every original attribute kept) and writes `markup.patch` plus `rewrite.md`: CSS backgrounds
    (with the exact `@media` rules), Markdown, imports and data strings to handle by hand, the pipeline
-   risks, and the `dynamic-range-limit` CSS. It skips images already inside a `<picture>`, so re-runs
-   change nothing. Review the patch, then `--apply`; commit only when the owner asks.
+   risks, and the `dynamic-range-limit` CSS. It skips images already inside a `<picture>`, so a re-run
+   leaves them as they are. Review the patch, then `--apply`; commit only when the owner asks.
 
-Fix the pipeline risks before deploying, or the tiers ship stripped. After deploying, fetch one
+Fix the pipeline risks before deploying, so the tiers ship with their gain maps and profiles. After deploying, fetch one
 `.uhdr.jpg` from the live site and check it still holds two images (base + gain map).
 
 ## Results
@@ -122,7 +136,7 @@ Fix the pipeline risks before deploying, or the tiers ship stripped. After deplo
 Exit 0 = every check passed; 1 = a check failed (named in the report); 3 = regenerate the dark edit.
 `<dir>/<name>/` holds the three tiers, `<name>.report.json`, `<name>.picture.html` (paste-ready),
 `preview.html` (slider: generator output vs each tier, the live `<picture>` choice, the report and
-checks) and `frames/`. **Serve the folder over HTTP to view `preview.html`**, not `file://`
+checks) and `frames/`. **Serve the folder over HTTP to view `preview.html`**
 (a static server, or a `.claude/launch.json` entry running `python3 -m http.server <port>` there).
 
 Checks: alignment (50+ inliers, median under 2 px), the Ultra HDR file holds base + gain map, decoded
@@ -139,7 +153,7 @@ no more than the generator did.
   colour from the dark edit where the base clipped.
 - SDR base: local tone map (bilateral base/detail split, soft shoulder above 0.7); out-of-range colour
   keeps hue and saturation and gives up level.
-- P3: OKLab chroma x1.15 only on already-saturated colour, never neutrals. The profile comes from
+- P3: OKLab chroma x1.15 only on already-saturated colour; neutrals keep their values. The profile comes from
   `display_p3_icc.py` (verified against Little CMS: max difference 1 on the 0-255 scale).
 - Encodes with libultrahdr via `imagecodecs`, then decodes every file and checks it.
 
@@ -154,42 +168,42 @@ no more than the generator did.
 ```
 
 - Calm HDR in grids, full when opened: `dynamic-range-limit: standard` / `no-limit`.
-- Wrong guesses are safe: every tier contains a correct SDR picture.
-- **Never re-save these files through a JPEG optimizer**; it drops the gain map and the P3 profile
-  (any JPEG optimizer or CDN re-encode can do this; exclude these files from it).
-- Prerendered HTML only; no JavaScript source swapping.
+- Every tier contains a correct SDR picture, so each screen gets a good image.
+- **Serve these files byte for byte.** A JPEG optimizer or a CDN re-encode drops the gain map and the
+  P3 profile; exclude these files from it.
+- Prerender the `<picture>` in HTML; the browser picks the file.
 
 ## Making generated images better for the web
 
-A generator's file is a starting point, not a web asset: 8-bit sRGB, no colour profile, nothing
-above white, highlights clipped. Use the skill to close that gap on purpose:
+A generator's file is a starting point: 8-bit sRGB, untagged, capped at SDR white, highlights
+clipped. Use the skill to close that gap on purpose:
 
 1. **Prompt for range.** Name a light source or a specular (a filament, low sun on glass, wet
    highlights) and colours near the sRGB edge (ripe fruit, neon, deep teal). Low-key or pastel scenes
    have little to lift; the report will say so.
-2. **Edit, never regenerate, for the dark frame.** A second generation is a second scene. If the
-   alignment check fails twice, build single-frame rather than tuning the code.
+2. **Edit the saved base for the dark frame**, so both frames hold one scene. If the alignment check
+   fails twice, build single-frame.
 3. **Read the report before shipping a tier.** `pixels above SDR white` and `HDR peak` say whether
    the HDR file earns its extra bytes (it is about 1.8x the SDR file); `P3 SDR pixels outside sRGB`
    says whether the P3 file differs at all. Near zero on both: ship only `<slug>.sdr.jpg`.
 4. **Deliver with `<picture>`** (see Deliver), with `width`/`height` set, `dynamic-range-limit:
-   standard` in grids and `no-limit` when opened, prerendered, never re-saved by an optimizer.
+   standard` in grids and `no-limit` when opened, prerendered, served byte for byte.
 5. **Show readers without HDR or P3 what they miss.** Put the generator's file beside the
-   `<picture>` and mark, from the decoded files, where pixels go above white or outside sRGB. A
-   measured map is honest; a brightened SDR copy that imitates HDR is not.
-6. **Say what is authored.** Generated highlights and P3 colour are designed, not captured; a caption
-   line says so, and HDR display is proven by the decoded numbers until someone checks on an HDR screen.
+   `<picture>` and mark, from the decoded files, where pixels go above white or outside sRGB. Build
+   that map from the decoded files.
+6. **Say what is authored.** Generated highlights and P3 colour are designed by the generator; a
+   caption line says so, and HDR display is proven by the decoded numbers until someone checks on an HDR screen.
 
 ## Rules and limits
 
 - The host project's image rules still apply (for example: no text or logos unless asked, and
   **get the owner's pick before an image is wired into a page**).
-- Highlights and P3 colour from a generator are **authored**, not captured: the "4 stops darker" edit
-  is really 0.4 to 2 stops and uneven, so the HDR level is set by headroom. Low-key scenes (dusk, night
+- Highlights and P3 colour from a generator are **authored**: the "4 stops darker" edit measures
+  0.4 to 2 stops and uneven, so the HDR level is set by headroom. Low-key scenes (dusk, night
   with one lamp) clip little and get little HDR; the report says so. Real camera frames give real HDR.
 - Size is the generator's (about 1000 to 1280 px after the crop). For a hero, upscale the frames
-  before building, never the finished files.
+  before building.
 - libultrahdr fixes the base to sRGB, which is why P3 SDR is a separate file.
 - If an edit changes the scene (moved sun, reshaped cloud), expect a colour fringe; regenerate the
-  edit rather than tuning the code.
+  edit.
 - HDR display is proven by numbers until someone looks on an HDR screen; say which was checked.

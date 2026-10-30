@@ -2,12 +2,12 @@
 
 ## Requirements
 
-- Python 3.10 or later with the `venv` module, or `uv`. Nothing else to install: the first run sets up
-  its own environment. Works on macOS, Linux, WSL and native Windows.
+- Python 3.10 or later with the `venv` module, or `uv`. The first run sets up its own
+  environment. Works on macOS, Linux, WSL and native Windows.
 - bash only for the two bundled generator adapters (macOS, Linux, WSL, Git Bash).
 - Optional: an image generator. The bundled adapters drive Cursor's `agent` CLI and Google Antigravity's
   `agy` CLI. Any other generator works through an adapter or through an agent (see [generators](generators.md)).
-  Without one you can still rebuild the examples, convert your own images, and upgrade a site.
+  With Python alone you can rebuild the examples, convert your own images, and upgrade a site.
 
 ## Install
 
@@ -70,7 +70,7 @@ Agents that read `AGENTS.md` (Codex, Cursor, Gemini CLI and others) find their i
 
 ## First run
 
-There is no install step. The first call of any command creates the Python environment, installs the
+The first call of any command creates the Python environment, installs the
 pinned libraries into it, and re-runs the command inside it. To do that up front and see what it found:
 
 ```bash
@@ -93,7 +93,7 @@ calls hand over straight away. The environment lives in `~/.venvs/true-image`; s
 put it elsewhere. Setup tries Python's `venv` module first, then `uv` (which can also fetch a newer
 Python), then `virtualenv`.
 
-## A first result without a generator
+## A first result from the example frames
 
 ```bash
 python3 scripts/true_image.py build --slug glass-furnace --out examples

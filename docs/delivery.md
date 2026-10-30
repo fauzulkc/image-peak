@@ -17,15 +17,15 @@ The browser picks before it downloads anything, so each visitor fetches one file
 
 | Screen | Gets |
 |---|---|
-| HDR (reports `dynamic-range: high`) | `name.uhdr.jpg`. Browsers that apply gain maps lift the highlights; the OS scales the lift to the screen's headroom at that moment. Browsers that do not apply them show its sRGB base |
-| Wide gamut, not in HDR | `name.p3.jpg` |
+| HDR (reports `dynamic-range: high`) | `name.uhdr.jpg`. Browsers that apply gain maps lift the highlights; the OS scales the lift to the screen's headroom at that moment. Other browsers show its sRGB base |
+| Wide gamut, showing SDR | `name.p3.jpg` |
 | Everything else | `name.sdr.jpg` |
 
-Every file holds a correct SDR picture, so a wrong guess still shows a good image. Browser support for
+Every file holds a correct SDR picture, so every screen shows a good image. Browser support for
 gain maps and `dynamic-range-limit` is moving; the current state, with sources, is in
 [The colour you mostly won't see](https://fauzul.com/blog/colour-you-mostly-wont-see).
 
-Skip a file when it earns nothing: if the report shows almost no `pixels above SDR white`, leave out the
+Ship a file when it earns its bytes: if the report shows almost no `pixels above SDR white`, leave out the
 HDR `<source>`; if almost no `P3 SDR pixels outside sRGB`, leave out the P3 one. (`upgrade` and
 `rewrite` do this by the 0.5% rule.)
 
@@ -57,7 +57,7 @@ curl -s https://example.com/images/name.uhdr.jpg -o /tmp/check.jpg && python3 -c
 
 ## CSS backgrounds
 
-`<picture>` cannot reach a CSS background. Swap the image with media queries instead:
+For a CSS background, swap the image with media queries:
 
 ```css
 .band { background-image: url("name.sdr.jpg"); }

@@ -9,13 +9,13 @@
 
 Image generators hand you an 8-bit sRGB picture: no colour profile, nothing brighter than white, and
 the brightest parts (fire, sun, neon, snow) clipped flat. true-image keeps the generator's picture
-and adds what it cannot give you: real highlight range and wide-gamut colour, delivered as three files
+and adds real highlight range and wide-gamut colour, delivered as three files
 so every screen gets the best version it can show, from one `<picture>` element.
 
 ![Generator output, the true-image sRGB tier, and a measured map of where the HDR and P3 files go beyond SDR](docs/figures/overview.jpg)
 
 *Left: what the generator made. Middle: the sRGB file true-image ships to ordinary screens, with the
-fire's detail recovered instead of a white blob. Right: measured from the decoded files, orange where the
+fire's flames and detail recovered. Right: measured from the decoded files, orange where the
 HDR file goes brighter than white (brighter orange, more headroom), cyan where the P3 file holds colour
 sRGB cannot show.*
 
@@ -30,7 +30,7 @@ on oklch, Display P3 and HDR on today's screens, with live demos.
 | File | What it is | Who sees it |
 |---|---|---|
 | `name.uhdr.jpg` | Ultra HDR JPEG: an sRGB picture plus a gain map that lifts highlights and widens colour | HDR screens in Chromium browsers and Safari 26; the OS scales the lift to the screen's live headroom |
-| `name.p3.jpg` | SDR JPEG in Display P3 | Wide-gamut screens not showing HDR |
+| `name.p3.jpg` | SDR JPEG in Display P3 | Wide-gamut screens showing SDR |
 | `name.sdr.jpg` | SDR JPEG in sRGB, highlight detail kept | Everyone else |
 | `name.picture.html` | The `<picture>` element that picks between them | Paste into your page |
 | `preview.html` | Slider comparing the generator output with each file, plus the full report | You, before shipping |
@@ -57,8 +57,8 @@ scene earns little of either, and the report says so. Per-scene figures and note
 ## Install
 
 Needs only Python 3.10+ (or [uv](https://docs.astral.sh/uv/)), on macOS, Linux, WSL or native Windows.
-There is no setup step: the first run of any command builds its own environment in `~/.venvs/true-image`
-(about a minute, once; nothing compiles) and carries on. Pick the route for your agent.
+The first run of any command builds its own environment in `~/.venvs/true-image` (about a minute,
+once, from prebuilt wheels) and carries on. Pick the route for your agent.
 
 **Any agent harness or terminal** (Codex, Cursor, Gemini CLI, Windsurf, your own):
 
@@ -100,7 +100,7 @@ git clone https://github.com/fauzulkc/true-image.git ~/.claude/skills/true-image
 git clone https://github.com/fauzulkc/true-image.git && cd true-image
 ```
 
-Use one Claude Code route, not both, or the skill shows up twice. Details and troubleshooting:
+Use one Claude Code route; two routes load the skill twice. Details and troubleshooting:
 [docs/getting-started.md](docs/getting-started.md).
 
 ## Use it from an agent
@@ -125,7 +125,7 @@ Turn the photo in public/images/sunset.jpg into true-image tiers.
 Every command below runs from the repo folder. `python3 scripts/true_image.py` is the one entry point
 (`true-image` if you used the installer; `py scripts\true_image.py` on Windows).
 
-**Try it in a minute, no generator needed:** rebuild an example from its saved frames and open the preview.
+**Try it in a minute:** rebuild an example from its saved frames and open the preview.
 
 ```bash
 python3 scripts/true_image.py build --slug night-market --out examples
@@ -148,6 +148,15 @@ python3 scripts/true_image.py plan "a filament bulb glowing at dusk" --slug bulb
 python3 scripts/true_image.py build --slug bulb --out ./images
 ```
 
+**An image you already generated** (agy, Cursor, an MCP tool, a download): save it as the base frame and
+build, with an optional darker edit for recovered detail. See [docs/post-process.md](docs/post-process.md).
+
+```bash
+python3 scripts/true_image.py plan "a filament bulb glowing at dusk" --slug bulb --out ./images
+cp ~/Downloads/bulb.png ./images/bulb/frames/bulb.base.png
+python3 scripts/true_image.py build --slug bulb --out ./images
+```
+
 **An existing site or repo:** audit, upgrade, then a reviewable `<img>` → `<picture>` patch.
 
 ```bash
@@ -156,8 +165,8 @@ python3 scripts/true_image.py upgrade ./my-site --generator cursor
 python3 scripts/true_image.py rewrite ./my-site
 ```
 
-`audit` changes nothing; `upgrade` writes new files beside each original at its exact size and never
-touches the originals; `rewrite` writes `markup.patch` and applies it only with `--apply`. A worked example
+`audit` reports; `upgrade` writes new files beside each original at its exact size and leaves the
+originals as they are; `rewrite` writes `markup.patch`, and `--apply` applies it. A worked example
 with its recorded output: [examples/site-upgrade](examples/site-upgrade). Full walkthrough:
 [docs/site-upgrade.md](docs/site-upgrade.md).
 
@@ -176,29 +185,28 @@ img { dynamic-range-limit: standard; }          /* calm HDR in grids and body co
 .hero img { dynamic-range-limit: no-limit; }    /* full HDR where the image is the point */
 ```
 
-Every file holds a correct SDR picture, so a wrong guess still shows a good image. **Never pass these
-files through an image optimizer or a CDN that re-encodes JPEGs**: re-saving strips the gain map and the
-P3 profile. `audit` lists the steps in your build that would. More: [docs/delivery.md](docs/delivery.md).
+Every file holds a correct SDR picture, so each screen shows a good image whichever file it picks.
+**Serve these files byte for byte**: an image optimizer or a CDN that re-encodes JPEGs strips the gain
+map and the P3 profile. `audit` lists those steps in your build. More: [docs/delivery.md](docs/delivery.md).
 
 ## How it works
 
-1. The generator makes the picture, then edits that same picture about 4 stops darker, so the bright
-   parts show colour and texture. An edit, never a second generation: a second generation is a
-   different scene.
+1. The generator makes the picture, then edits that same saved picture about 4 stops darker, so the
+   bright parts show colour and texture and both frames hold one scene.
 2. The code aligns the two, builds an HDR master (the base everywhere; highlights lifted with shape and
    colour from the dark edit), tone-maps an sRGB file that keeps highlight detail, expands
    already-saturated colour into P3, and encodes everything with libultrahdr.
 3. Every file is decoded and checked. A run that fails a check exits non-zero and names the check.
 
-A generator that cannot edit still works in single-frame mode (highlights lifted from the one image).
-Real camera brackets work too, and give captured rather than authored range. Full detail:
+A text-only generator runs in single-frame mode (highlights lifted from the one image). Real camera
+brackets work too, and give captured range. Full detail:
 [docs/how-it-works.md](docs/how-it-works.md).
 
 ## Be honest about what it is
 
-- Highlights and P3 colour built from a generator are **authored, not captured**: the generator invents
-  what a darker exposure shows, and its "4 stops darker" is really 0.4 to 2 stops and uneven, so the HDR
-  level is set by a chosen headroom. Say so where it matters.
+- Highlights and P3 colour built from a generator are **authored**: the generator invents what a darker
+  exposure shows, and its "4 stops darker" measures 0.4 to 2 stops and uneven, so a chosen headroom sets
+  the HDR level. Say so where it matters.
 - Output size is the generator's (about 1,000 to 1,300 px wide). Upscale the frames before building a hero.
 - HDR is proven by decoded numbers until someone looks on an HDR screen. The examples were checked by
   decoding; view `preview.html` on an HDR display in Chrome or Safari to see the real thing.
@@ -211,6 +219,7 @@ Real camera brackets work too, and give captured rather than authored range. Ful
 | [AGENTS.md](AGENTS.md) | Instructions for any agent harness: routes, commands, exit codes, rules |
 | [Usage](docs/usage.md) | Every command, flag, output file and exit code |
 | [Generators](docs/generators.md) | Cursor, agy, writing an adapter, agent-driven tools |
+| [Post-processing](docs/post-process.md) | An image already made with agy, Cursor, an MCP tool or any source, as the step after generation |
 | [Upgrading a site](docs/site-upgrade.md) | audit, upgrade, rewrite, pipeline risks |
 | [How it works](docs/how-it-works.md) | Alignment, headroom, HDR master, tone mapping, P3, checks |
 | [Delivery](docs/delivery.md) | `<picture>`, `dynamic-range-limit`, keeping files intact |
