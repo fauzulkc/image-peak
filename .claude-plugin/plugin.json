@@ -1,10 +1,10 @@
 {
-  "name": "image-peak",
-  "version": "1.0.1",
+  "name": "true-image",
+  "version": "1.1.0",
   "description": "One prompt, or an existing site's images, to verified Ultra HDR, Display P3 and sRGB web images with any image generator, plus a ready <picture> snippet.",
   "author": { "name": "Fauzul Chowdhury", "url": "https://github.com/fauzulkc" },
-  "homepage": "https://github.com/fauzulkc/image-peak",
-  "repository": "https://github.com/fauzulkc/image-peak",
+  "homepage": "https://fauzul.com/true-image",
+  "repository": "https://github.com/fauzulkc/true-image",
   "license": "MIT",
   "keywords": ["hdr", "gain-map", "ultra-hdr", "display-p3", "wide-gamut", "image-generation", "web-images", "picture-element"]
 }

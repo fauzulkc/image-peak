@@ -1,10 +1,10 @@
 """One prompt in, three verified delivery tiers out (Ultra HDR, P3 SDR, sRGB SDR), with any image generator.
 
-Run with any Python 3: `python3 scripts/image_peak.py <command>` (or `bash scripts/image-peak`). The
+Run with any Python 3: `python3 scripts/true_image.py <command>` (or `bash scripts/true-image`). The
 first run sets up its own environment and re-runs inside it. Subcommands:
 
   doctor
-        Sets up the environment if needed and prints what image-peak will use.
+        Sets up the environment if needed and prints what true-image will use.
 
   plan  "<scene prompt>" --slug NAME --out DIR [--no-people] [--aspect 3:2]
         Writes DIR/NAME/plan.json and prints the two generator-neutral prompts and where each frame goes.

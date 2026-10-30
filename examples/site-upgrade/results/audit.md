@@ -1,4 +1,4 @@
-# image-peak audit: site
+# true-image audit: site
 
 | Image | Size | Clipped | Saturated | Used in | Recommendation |
 |---|---|---|---|---|---|

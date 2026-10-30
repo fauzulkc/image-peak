@@ -1,4 +1,4 @@
-# image-peak
+# true-image
 
 **One prompt, or an existing site's images, to verified HDR, Display P3 and sRGB web images, with any image generator.**
 
@@ -8,16 +8,19 @@
 [![Display P3](https://img.shields.io/badge/colour-Display%20P3-06b6d4.svg)](docs/delivery.md)
 
 Image generators hand you an 8-bit sRGB picture: no colour profile, nothing brighter than white, and
-the brightest parts (fire, sun, neon, snow) clipped flat. image-peak keeps the generator's picture
+the brightest parts (fire, sun, neon, snow) clipped flat. true-image keeps the generator's picture
 and adds what it cannot give you: real highlight range and wide-gamut colour, delivered as three files
 so every screen gets the best version it can show, from one `<picture>` element.
 
-![Generator output, the image-peak sRGB tier, and a measured map of where the HDR and P3 files go beyond SDR](docs/figures/overview.jpg)
+![Generator output, the true-image sRGB tier, and a measured map of where the HDR and P3 files go beyond SDR](docs/figures/overview.jpg)
 
-*Left: what the generator made. Middle: the sRGB file image-peak ships to ordinary screens, with the
+*Left: what the generator made. Middle: the sRGB file true-image ships to ordinary screens, with the
 fire's detail recovered instead of a white blob. Right: measured from the decoded files, orange where the
 HDR file goes brighter than white (brighter orange, more headroom), cyan where the P3 file holds colour
 sRGB cannot show.*
+
+**See it on your screen:** [fauzul.com/true-image](https://fauzul.com/true-image), drag comparisons
+and a loupe over the real files.
 
 **The story behind it:** [The colour you mostly won't see](https://fauzul.com/blog/colour-you-mostly-wont-see),
 on oklch, Display P3 and HDR on today's screens, with live demos.
@@ -54,47 +57,47 @@ scene earns little of either, and the report says so. Per-scene figures and note
 ## Install
 
 Needs only Python 3.10+ (or [uv](https://docs.astral.sh/uv/)), on macOS, Linux, WSL or native Windows.
-There is no setup step: the first run of any command builds its own environment in `~/.venvs/image-peak`
+There is no setup step: the first run of any command builds its own environment in `~/.venvs/true-image`
 (about a minute, once; nothing compiles) and carries on. Pick the route for your agent.
 
 **Any agent harness or terminal** (Codex, Cursor, Gemini CLI, Windsurf, your own):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/fauzulkc/image-peak/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/fauzulkc/true-image/main/install.sh | bash
 ```
 
-This puts an `image-peak` command on your `PATH`. Agents that read `AGENTS.md` get their instructions
+This puts an `true-image` command on your `PATH`. Agents that read `AGENTS.md` get their instructions
 from [AGENTS.md](AGENTS.md); point any other agent at it.
 
 **Claude Code plugin** (the best route in Claude Code). In Claude Code:
 
 ```text
-/plugin install image-peak --marketplace fauzulkc/image-peak
+/plugin install true-image --marketplace fauzulkc/true-image
 ```
 
 On Claude Code older than 2.1.275, add the marketplace first:
 
 ```text
-/plugin marketplace add fauzulkc/image-peak
-/plugin install image-peak@image-peak
+/plugin marketplace add fauzulkc/true-image
+/plugin install true-image@true-image
 ```
 
 From a terminal instead:
 
 ```bash
-claude plugin marketplace add fauzulkc/image-peak && claude plugin install image-peak@image-peak
+claude plugin marketplace add fauzulkc/true-image && claude plugin install true-image@true-image
 ```
 
 **Claude Code skill folder** (without the plugin system):
 
 ```bash
-git clone https://github.com/fauzulkc/image-peak.git ~/.claude/skills/image-peak
+git clone https://github.com/fauzulkc/true-image.git ~/.claude/skills/true-image
 ```
 
 **Just the code** (any OS, including Windows without WSL; use `py` if `python3` is missing):
 
 ```bash
-git clone https://github.com/fauzulkc/image-peak.git && cd image-peak
+git clone https://github.com/fauzulkc/true-image.git && cd true-image
 ```
 
 Use one Claude Code route, not both, or the skill shows up twice. Details and troubleshooting:
@@ -102,30 +105,30 @@ Use one Claude Code route, not both, or the skill shows up twice. Details and tr
 
 ## Use it from an agent
 
-Ask in plain words. In Claude Code the skill loads itself; in other harnesses, say "use image-peak" or
+Ask in plain words. In Claude Code the skill loads itself; in other harnesses, say "use true-image" or
 point the agent at `AGENTS.md`. The agent runs every step, including the one-time setup:
 
 ```text
-Make a hero image of a glass furnace with image-peak: HDR and P3, generated with Cursor.
+Make a hero image of a glass furnace with true-image: HDR and P3, generated with Cursor.
 ```
 
 ```text
-Audit this site's images with image-peak and upgrade the ones that would gain from HDR or P3.
+Audit this site's images with true-image and upgrade the ones that would gain from HDR or P3.
 ```
 
 ```text
-Turn the photo in public/images/sunset.jpg into image-peak tiers.
+Turn the photo in public/images/sunset.jpg into true-image tiers.
 ```
 
 ## Use it from a terminal
 
-Every command below runs from the repo folder. `python3 scripts/image_peak.py` is the one entry point
-(`image-peak` if you used the installer; `py scripts\image_peak.py` on Windows).
+Every command below runs from the repo folder. `python3 scripts/true_image.py` is the one entry point
+(`true-image` if you used the installer; `py scripts\true_image.py` on Windows).
 
 **Try it in a minute, no generator needed:** rebuild an example from its saved frames and open the preview.
 
 ```bash
-python3 scripts/image_peak.py build --slug night-market --out examples
+python3 scripts/true_image.py build --slug night-market --out examples
 python3 -m http.server 8000 --directory examples
 ```
 
@@ -134,23 +137,23 @@ Then open <http://localhost:8000/night-market/preview.html>.
 **One prompt with a generator CLI** (adapters for Cursor's `agent` and Antigravity's `agy` are bundled; any other generator plugs in through a [two-command adapter](docs/generators.md)):
 
 ```bash
-python3 scripts/image_peak.py run "a filament bulb glowing at dusk on a wooden desk" --slug bulb --out ./images --generator cursor
+python3 scripts/true_image.py run "a filament bulb glowing at dusk on a wooden desk" --slug bulb --out ./images --generator cursor
 ```
 
 **Generator only an agent can call** (an MCP image tool, a harness's built-in one): `plan` prints the two
 prompts and where to save each image, `build` does the rest. See [docs/generators.md](docs/generators.md).
 
 ```bash
-python3 scripts/image_peak.py plan "a filament bulb glowing at dusk" --slug bulb --out ./images
-python3 scripts/image_peak.py build --slug bulb --out ./images
+python3 scripts/true_image.py plan "a filament bulb glowing at dusk" --slug bulb --out ./images
+python3 scripts/true_image.py build --slug bulb --out ./images
 ```
 
 **An existing site or repo:** audit, upgrade, then a reviewable `<img>` → `<picture>` patch.
 
 ```bash
-python3 scripts/image_peak.py audit   ./my-site
-python3 scripts/image_peak.py upgrade ./my-site --generator cursor
-python3 scripts/image_peak.py rewrite ./my-site
+python3 scripts/true_image.py audit   ./my-site
+python3 scripts/true_image.py upgrade ./my-site --generator cursor
+python3 scripts/true_image.py rewrite ./my-site
 ```
 
 `audit` changes nothing; `upgrade` writes new files beside each original at its exact size and never

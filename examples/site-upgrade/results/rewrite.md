@@ -1,6 +1,6 @@
-# image-peak rewrite: site
+# true-image rewrite: site
 
-Patch only (not applied): 2 files with <img> to <picture> changes. Patch: `site/.image-peak/markup.patch`.
+Patch only (not applied): 2 files with <img> to <picture> changes. Patch: `site/.true-image/markup.patch`.
 
 ## Handle by hand
 

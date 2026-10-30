@@ -3,7 +3,7 @@
 Five scenes. Each started as two images from Cursor's built-in generator (a base and an edit of it about
 4 stops darker) and was built by this repo's code. Every number below comes from the scene's
 `report.json` in [`examples/`](../examples); all 8 checks passed on all five. The figures show the
-generator's picture, the sRGB file image-peak ships, and a map measured from the decoded files: orange
+generator's picture, the sRGB file true-image ships, and a map measured from the decoded files: orange
 where the HDR file goes above SDR white (brighter orange, more headroom), cyan where the P3 file holds
 colour outside sRGB.
 

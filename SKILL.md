@@ -1,9 +1,9 @@
 ---
-name: image-peak
+name: true-image
 description: Turn one text prompt into a full set of delivery images for every screen - an Ultra HDR (gain-map) JPEG with P3 colour for HDR screens, a Display P3 SDR JPEG for wide-gamut screens, and an sRGB SDR JPEG for everyone else - all verified by decoding, plus a ready <picture> snippet and a preview page with a comparison slider. Works with any image generator through any harness - a CLI (Cursor agent, agy, bundled adapters), any executable that follows a four-argument adapter contract, or an agent's own image tool (an MCP image tool, a harness's built-in image generation) via plan/build. Use whenever the user wants HDR images, gain-map or Ultra HDR photos, "full dynamic range", "best colour on every screen", wide-gamut / P3 imagery, images that "adapt to the screen", or a generated hero/card/band image that should not lose highlights (fire, sun, neon, snow, sky), in any project or workflow. Also use to convert existing frames (one image, or a base + darker pair, from any source including a camera) into the three tiers, and to upgrade the images of an existing site or repo - "upgrade our site's images to HDR", "make the photos on this site wide gamut", "audit our images" - with an audit (which images gain, where they are referenced, which build steps would strip the result), tiers at each image's exact original size, and a reviewable <img> to <picture> patch.
 ---
 
-# image-peak: HDR and P3 images from one prompt, any generator
+# true-image: HDR and P3 images from one prompt, any generator
 
 One prompt in, three verified files out. Image generators only make **8-bit sRGB SDR** (checked:
 Cursor/Nano Banana JPEGs have no colour profile, at most 1280 px, nothing above white). The
@@ -31,19 +31,19 @@ A text-only generator that cannot edit: give it only the base. The build runs in
 
 ## Running it
 
-Below, `IMAGE_PEAK` means `python3 <base directory of this skill>/scripts/image_peak.py` (the folder
+Below, `TRUE_IMAGE` means `python3 <base directory of this skill>/scripts/true_image.py` (the folder
 that holds this SKILL.md; for a plugin install, the plugin folder). On Windows use `py` or `python`
 if `python3` is missing; it runs natively, and inside WSL too. **There is no install step:** the first
-call creates its own environment in `~/.venvs/image-peak` (once, about a minute; numpy, OpenCV, Pillow,
+call creates its own environment in `~/.venvs/true-image` (once, about a minute; numpy, OpenCV, Pillow,
 imagecodecs with libultrahdr; nothing compiles), then re-runs the command inside it. It needs Python 3.10+
-with `venv`, or `uv`; the error names what to install if neither works. `IMAGE_PEAK doctor` sets up and
+with `venv`, or `uv`; the error names what to install if neither works. `TRUE_IMAGE doctor` sets up and
 reports which generator CLIs it found. Documentation with copy-paste examples: `docs/`, `AGENTS.md`
-(the same instructions for other agent harnesses) and https://github.com/fauzulkc/image-peak.
+(the same instructions for other agent harnesses) and https://github.com/fauzulkc/true-image.
 
 ## Route A: a CLI generator (one command)
 
 ```bash
-IMAGE_PEAK run "<scene prompt>" --slug <name> --out <dir> --generator cursor   # or agy, or /path/to/adapter
+TRUE_IMAGE run "<scene prompt>" --slug <name> --out <dir> --generator cursor   # or agy, or /path/to/adapter
 ```
 
 About 2 to 3 minutes (two generations plus ~20 s of processing); give the Bash call a 600000 ms
@@ -70,12 +70,12 @@ the adapter adds its own tool wording (see `cursor.sh`, about 20 lines). Pass it
 
 When only the agent can call the generator (an MCP image tool, a harness image tool):
 
-1. `IMAGE_PEAK plan "<scene prompt>" --slug <name> --out <dir>` writes `<dir>/<name>/plan.json` and prints
+1. `TRUE_IMAGE plan "<scene prompt>" --slug <name> --out <dir>` writes `<dir>/<name>/plan.json` and prints
    `base_prompt`, `base_path`, `dark_prompt`, `dark_prompt_stronger`, `dark_path`.
 2. Call the image tool with `base_prompt`; save the image to `base_path` (any of .jpg/.png/.webp).
 3. Call the tool **in edit mode on that saved base** with `dark_prompt`; save to `dark_path`.
    No edit mode: skip this step (single-frame mode).
-4. `IMAGE_PEAK build --slug <name> --out <dir>`. Exit 3 = the dark edit recovered too little: redo step 3
+4. `TRUE_IMAGE build --slug <name> --out <dir>`. Exit 3 = the dark edit recovered too little: redo step 3
    with `dark_prompt_stronger`, then build again.
 
 The same route converts frames from anywhere: drop `<name>.base.*` (and optionally `<name>.dark.*`)
@@ -83,12 +83,12 @@ into `<dir>/<name>/frames/` and run `build`. Real camera brackets work and give 
 
 ## Route C: upgrade an existing site or repo
 
-Three steps, each safe to stop after. Work files go to `<repo>/.image-peak/` (add it to `.gitignore`).
+Three steps, each safe to stop after. Work files go to `<repo>/.true-image/` (add it to `.gitignore`).
 
 ```bash
-IMAGE_PEAK audit   <repo>                        # report only; changes nothing
-IMAGE_PEAK upgrade <repo> [--generator cursor]   # tiers next to each original; originals untouched
-IMAGE_PEAK rewrite <repo> [--apply]              # <img> to <picture>: a patch, applied only with --apply
+TRUE_IMAGE audit   <repo>                        # report only; changes nothing
+TRUE_IMAGE upgrade <repo> [--generator cursor]   # tiers next to each original; originals untouched
+TRUE_IMAGE rewrite <repo> [--apply]              # <img> to <picture>: a patch, applied only with --apply
 ```
 
 1. **audit** finds every JPEG, PNG and WebP (skipping `node_modules`, build output and existing tiers),

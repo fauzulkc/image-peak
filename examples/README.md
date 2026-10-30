@@ -42,7 +42,7 @@ report carries the difference.
 The frames are saved, so a rebuild needs no generator:
 
 ```bash
-python3 scripts/image_peak.py build --slug glass-furnace --out examples
+python3 scripts/true_image.py build --slug glass-furnace --out examples
 ```
 
 ## Prompts used
@@ -55,7 +55,7 @@ python3 scripts/image_peak.py build --slug glass-furnace --out examples
 | Snow peak | A high alpine valley at midday: a sunlit snowy mountain face and glacier under a deep blue sky, exposed for the dark pine forest in the foreground shade |
 | Lighthouse at dusk | A stone lighthouse on dark sea cliffs at dusk, its lamp lit and casting a beam, waves breaking white on the rocks below, a thin band of orange sunset under heavy storm clouds |
 
-Each base prompt was extended by image-peak with "a real, unedited camera photograph on a tripod, exposed
+Each base prompt was extended by true-image with "a real, unedited camera photograph on a tripod, exposed
 for the midtones …" and the no-text, no-logo constraints; `plan` prints the exact text.
 
 ## The images

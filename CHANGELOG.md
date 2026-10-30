@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 (2026-10-30)
+
+- Renamed from image-peak to true-image: the repo (`fauzulkc/true-image`; GitHub redirects the old
+  URL), the plugin and marketplace, the skill, the `true-image` command and `scripts/true_image.py`,
+  the `TRUE_IMAGE_*` environment variables, the `~/.venvs/true-image` environment and the `.true-image`
+  work folder. Reinstall the plugin under its new name.
+- Product page: [fauzul.com/true-image](https://fauzul.com/true-image).
+
 ## 1.0.1 (2026-10-30)
 
 - Reproducible builds: the sRGB file embeds a fixed sRGB profile built in code (identical conversion to
