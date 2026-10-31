@@ -24,7 +24,7 @@ three channels.
 
 The generator's furnace mouth is a white blob. The sRGB file shows the flames; the HDR file lifts the
 fire core and the molten glass toward 8× white. The cobalt and emerald vases and the orange firelight go
-into P3. The generator's darker edit measured 1.88 stops, not the 4 asked for.
+into P3. The generator's darker edit measured 1.88 stops against the 4 asked for.
 
 ## Night market
 
@@ -38,7 +38,7 @@ HDR and P3 screens. This scene was made from a single prompt with `run --generat
 
 ![Neon alley](figures/neon-alley-compare.jpg)
 
-The neon tubes were already coloured rather than blown, so the HDR lift is modest (3.58×, 0.4% of the
+The neon tubes were already coloured in the generator's picture, so the HDR lift is modest (3.58×, 0.4% of the
 picture). The P3 file is the gain here: 8.4% of the colour, the magenta, cyan and red tubes and their
 reflections, sits outside sRGB.
 
@@ -46,7 +46,7 @@ reflections, sits outside sRGB.
 
 ![Snow peak](figures/snow-peak-compare.jpg)
 
-Large bright areas get a lower peak (4×) so the snowfield does not glare. Blown pixels drop from 2.02% to
+Large bright areas get a lower peak (4×) so the snowfield stays comfortable to look at. Blown pixels drop from 2.02% to
 0.20% in the sRGB file, and 6.4% of the picture is lifted above white. The scene is close to neutral, so
 the P3 file adds almost nothing (0.3%): on a real page, ship the HDR and sRGB files and skip P3.
 
@@ -67,5 +67,5 @@ with six images, four kinds of reference and three pipeline risks. Its recorded 
 ## How these were checked
 
 By decoding every file and measuring it (the 8 checks in [how it works](how-it-works.md)), and by loading
-the previews in Chromium on an sRGB screen. The HDR and P3 files were not viewed on HDR or P3 hardware
-for this page: open any `examples/*/preview.html` over `http://` on such a screen to see them.
+the previews in Chromium on an sRGB screen. The HDR and P3 files were checked by decoding;
+to see them, open any `examples/*/preview.html` over `http://` on an HDR or P3 screen.

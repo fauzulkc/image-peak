@@ -9,9 +9,9 @@ The base is the prompt photographed normally; the dark image is an edit of that 
 darker. The edit holds what the base lost: the flame's structure, the snow's texture, the colour of a
 neon tube that clipped to white.
 
-Generators do not darken by the stops they are asked for. In the examples, "4 stops darker" measured
-between 0.4 and 1.9 stops, and unevenly: highlights darken more than midtones. So the dark image is used
-for the **shape and colour** of highlights, never as a measurement of light.
+Generators darken by less than they are asked for. In the examples, "4 stops darker" measured
+between 0.4 and 1.9 stops, and unevenly: highlights darken more than midtones. So the dark image supplies
+the **shape and colour** of highlights, and the chosen headroom sets their level.
 
 ## 2. Alignment
 
@@ -19,7 +19,7 @@ Edits reframe slightly. SIFT features (on contrast-equalised greyscale, so featu
 exposures) and a RANSAC homography map the dark image onto the base. The check requires at least 50
 inliers and a median residual under 2 px; the examples aligned with 488 to 1,671 inliers at 0.47 to
 1.11 px. New images are cropped to the area both images cover. Site upgrades keep the original size and
-use the base wherever the edit does not reach.
+use the base outside the edit's area.
 
 ## 3. Headroom
 
@@ -35,23 +35,22 @@ The HDR peak, as a multiple of SDR white, is chosen from what the highlights are
 ## 4. HDR master
 
 The base everywhere. Where the base clips, highlights are lifted toward the peak by how bright the dark
-image is there, relative to each pixel's own SDR level, so the soft edge of a highlight never pulls a
-dark neighbour (sky next to snow) toward white. Colour inside clipped areas comes from the dark image,
-because the base has none left there.
+image is there, relative to each pixel's own SDR level, so a dark neighbour at the soft edge of a
+highlight (sky next to snow) keeps its own level. Colour inside clipped areas comes from the dark image,
+because the base clipped it to white there.
 
 ## 5. The sRGB file: detail kept
 
 A local tone map of the master: a bilateral filter splits log luminance into a smooth base layer and a
 detail layer; the base layer gets a soft shoulder above 0.7 of white and the detail rides on top, so
 highlights keep their texture. Where a colour cannot be both that bright and that saturated in sRGB,
-the pixel keeps its hue and saturation and gives up brightness: fire stays orange flames instead of a
-pale patch. In single-frame mode there is nothing recovered to tone-map back in, so the generator's own
-picture is the sRGB file.
+the pixel keeps its hue and saturation and gives up brightness: fire stays orange flames. In
+single-frame mode the generator's own picture is the sRGB file.
 
 ## 6. P3
 
 Colour that is already saturated (OKLab chroma 0.06 to 0.14 ramps the effect in) is scaled by 1.15 and
-kept inside Display P3. Neutrals, stone and skin do not move. The Display P3 ICC profile is built in code
+kept inside Display P3. Neutrals, stone and skin keep their values. The Display P3 ICC profile is built in code
 by [`display_p3_icc.py`](../scripts/display_p3_icc.py) (P3 primaries, D65 white, the sRGB curve); it
 matches Little CMS within 1 step out of 255.
 
@@ -76,8 +75,8 @@ Every file is decoded again and checked:
 
 A failed check exits 1 and names itself. The report records every number behind it.
 
-## What it is and is not
+## What it is
 
 With generator images, the highlights and the P3 colour are **authored**: the generator invents what the
-darker exposure shows, and the peak is chosen, not measured. With camera brackets in `frames/`, the same
+darker exposure shows, and the chosen headroom sets the peak. With camera brackets in `frames/`, the same
 code merges captured light.

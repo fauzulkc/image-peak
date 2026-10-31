@@ -38,16 +38,16 @@ run `build`.
 | `plan.json`, `frames/` | Prompts and the generator's images |
 
 The files are cropped to the area both generator images share (edits often reframe slightly). To keep an
-image's exact size, use the site-upgrade commands below, which never crop.
+image's exact size, use the site-upgrade commands below, which keep the exact size.
 
 ### Report fields worth reading
 
 | Field | Meaning |
 |---|---|
 | `HDR peak in file` | Brightest highlight in the decoded HDR file, as a multiple of SDR white (99.95th percentile) |
-| `pixels above SDR white` | Share of the picture the HDR file lifts. Near 0%: the HDR file is not worth its bytes |
-| `P3 SDR pixels outside sRGB` | Share of colour only a P3 screen shows. Near 0%: the P3 file adds nothing |
-| `blown to white: generator base -> SDR tier` | Pixels clipped to white before and after; the sRGB file should never be worse |
+| `pixels above SDR white` | Share of the picture the HDR file lifts. Near 0%: ship without the HDR file |
+| `P3 SDR pixels outside sRGB` | Share of colour only a P3 screen shows. Near 0%: ship without the P3 file |
+| `blown to white: generator base -> SDR tier` | Pixels clipped to white before and after; the sRGB file matches or beats the generator |
 | `headroom`, `headroom reason` | The peak chosen and why |
 | `dark edit, measured gap` | How much darker the edit really was (generators rarely give the stops asked for) |
 | `checks` | The 8 checks, each true or false |
@@ -56,7 +56,7 @@ image's exact size, use the site-upgrade commands below, which never crop.
 
 | Command | Does |
 |---|---|
-| `audit REPO [--work DIR]` | Finds images and their references, scores each, lists pipeline risks. Writes `audit.md` and `audit.json`. Changes nothing |
+| `audit REPO [--work DIR]` | Finds images and their references, scores each, lists pipeline risks. Writes `audit.md` and `audit.json`. Report only |
 | `upgrade REPO [--work DIR] [--images PATH …] [--generator ADAPTER \| --plan-only] [--headroom auto\|N]` | Builds the files beside each original, at its exact size |
 | `rewrite REPO [--work DIR] [--apply]` | Writes `markup.patch` and `rewrite.md`; `--apply` also edits the files |
 

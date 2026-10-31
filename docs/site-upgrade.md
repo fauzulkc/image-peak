@@ -23,8 +23,8 @@ imports, and strings in data files. It then scores each image.
 | skip | Uses transparency (gain-map JPEGs have no alpha) |
 | skip | Already has a gain map |
 | skip | Already in a wide-gamut profile (keep the original as the P3 file) |
-| skip | A flat graphic or screenshot (P3 expansion would shift brand colours; HDR adds nothing) |
-| skip | Under 0.3% clipped highlights and under 3% saturated colour (nothing to gain) |
+| skip | A flat graphic or screenshot (P3 expansion would shift brand colours) |
+| skip | Under 0.3% clipped highlights and under 3% saturated colour (little to gain) |
 | upgrade | Clipped highlights to recover, or saturated colour for the P3 file |
 
 It also lists **pipeline risks**: build steps that re-save JPEGs and would strip the gain map and the P3
@@ -58,15 +58,15 @@ python3 scripts/true_image.py upgrade ./my-site --plan-only                  # d
 ```
 
 - Files keep the original's **exact size**, so `width`, `height` and layouts stay right.
-- Originals are never modified or deleted.
+- Originals stay as they are.
 - With a generator, the generator edits each original darker and the files get recovered highlight
   detail; the new `name.sdr.jpg` becomes the fallback. Without one, single-frame mode lifts the
   highlights and the original stays the fallback.
 - `--plan-only` writes `pending-edits.json`: for each image, the input file, the prompt, a stronger
   prompt and where to save the edit. Save the edits, then run `upgrade` again.
 - Each image ships only the files that earn their bytes: the HDR file when at least 0.5% of pixels go
-  above white, the P3 file when at least 0.5% of colour falls outside sRGB. Nothing earned: nothing is
-  written.
+  above white, the P3 file when at least 0.5% of colour falls outside sRGB. An image that earns
+  neither keeps only its original.
 - A failed or weak generator edit falls back to single-frame.
 
 From the example: the furnace had a generator edit and shipped all three files (peak 7.78×, 2.9% above
@@ -78,7 +78,7 @@ shipped HDR only (6.9% above white, 0.0% outside sRGB, so no P3 file).
 `rewrite` changes literal `<img src>` references to upgraded images into `<picture>` elements, keeping
 every attribute, with `srcSet` and self-closing tags in JSX. It writes `markup.patch` and `rewrite.md`
 and edits files only with `--apply`. Images already inside a `<picture>` are left alone, so a second run
-changes nothing.
+leaves them as they are.
 
 From the example's `markup.patch`:
 

@@ -7,6 +7,9 @@
   the `TRUE_IMAGE_*` environment variables, the `~/.venvs/true-image` environment and the `.true-image`
   work folder. Reinstall the plugin under its new name.
 - Product page: [fauzul.com/true-image](https://fauzul.com/true-image).
+- New guide, [docs/post-process.md](docs/post-process.md): true-image as the step after any generation
+  (agy, Cursor, an MCP image tool, a web app), with a rules block and a shell function for every image.
+- Docs state what each command does, in plain positive wording.
 
 ## 1.0.1 (2026-10-30)
 
